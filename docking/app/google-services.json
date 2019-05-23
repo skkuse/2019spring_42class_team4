@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "985156114718",
+    "firebase_url": "https://firedocking.firebaseio.com",
+    "project_id": "firedocking",
+    "storage_bucket": "firedocking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985156114718:android:51ec6b6213c2cc6c",
+        "android_client_info": {
+          "package_name": "com.example.docking_milkyway"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985156114718-h44t15f46553bdv6kip97hv4t6me12j6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.docking_milkyway",
+            "certificate_hash": "0754fab6d0303e1121f8256559ca3e20eefa6052"
+          }
+        },
+        {
+          "client_id": "985156114718-j53paut2sohc0njatgcvnva1q88qa8qv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjX2D9CVjt1yPFQpOaDNphETHQ-3geLCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985156114718-j53paut2sohc0njatgcvnva1q88qa8qv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

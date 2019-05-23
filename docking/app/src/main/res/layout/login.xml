@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10pt"
+            android:text="로그인"
+            android:id="@+id/signin"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="40dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:orientation="vertical">
+            <TextView
+                android:text="아이디를 입력하세요."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:text="docking@docking.com"
+                android:id="@+id/emailinsert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:orientation="vertical">
+            <TextView
+                android:text="비밀번호를 입력하세요."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:text="*********"
+                android:id="@+id/pwinsert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <Button
+                android:text="아이디 / 비밀번호 찾기"
+                android:background="@color/common_google_signin_btn_text_dark"
+                android:id="@+id/forgetidpw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"/>
+            <Button
+                android:text="로그인"
+                android:id="@+id/log_in"
+                android:background="@color/common_google_signin_btn_text_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

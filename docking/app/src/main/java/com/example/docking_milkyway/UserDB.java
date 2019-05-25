@@ -1,7 +1,6 @@
 package com.example.docking_milkyway;
 
 public class UserDB {
-    int SSN;
     String email;
     String pw;
     String nickname;
@@ -9,11 +8,12 @@ public class UserDB {
     String sex;
     String usertype;
 
+    int count = 0;
+
     UserDB(){
     }
 
-    UserDB(int SSN, String email, String pw, String nickname, String usertype){
-        this.SSN = SSN;
+    UserDB(String email, String pw, String nickname, String usertype){
         this.email = email;
         this.pw = pw;
         this.nickname = nickname;
@@ -23,7 +23,6 @@ public class UserDB {
     }
 
     UserDB(int SSN, String email, String pw, String nickname, int age, String sex, String usertype){
-        this.SSN = SSN;
         this.email = email;
         this.pw = pw;
         this.nickname = nickname;
@@ -31,9 +30,6 @@ public class UserDB {
         this.sex = sex;
         this.usertype = usertype;
     }
-
-    public int getSSN() { return SSN; }
-    public void setSSN(int SSN) { this.SSN = SSN; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -52,4 +48,12 @@ public class UserDB {
 
     public String getUsertype() { return usertype; }
     public void setUsertype(String usertype) { this.usertype = usertype; }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }

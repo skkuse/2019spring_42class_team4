@@ -14,6 +14,8 @@ public class Walking extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.walking, container, false);
 
+
+
         return view;
     }
 

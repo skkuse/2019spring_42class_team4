@@ -24,8 +24,13 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="산책하기"
+            android:text="산책 기록"
             android:id="@+id/bt3"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그인"
+            android:id="@+id/bt4"/>
     </LinearLayout>
 
     <FrameLayout

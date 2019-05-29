@@ -20,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button bt1, bt2, bt3, bt4;
+    Button bt1, bt2, bt3, bt4,bt5;
     FragmentManager fm;
     FragmentTransaction fragtrans;
     Mypage mypage;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt2 = (Button) findViewById(R.id.bt2);
         bt3 = (Button) findViewById(R.id.bt3);
         bt4 = (Button) findViewById(R.id.bt4);
+        bt5 = (Button) findViewById(R.id.bt5);
         bt1.setOnClickListener(this);
         bt2.setOnClickListener(this);
         bt3.setOnClickListener(this);
@@ -45,16 +46,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
             }
         });
+        bt5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, signin.class);
+                startActivity(intent);
+            }
+        });
         mypage = new Mypage();
         community = new Community();
         walking = new Walking();
         setFrag(1);
 
         //firebase 연동 확인
-        /*FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //DatabaseReference myRef = database.getReference("message");
 
-        myRef.setValue("Hello, World!");*/
+        //myRef.setValue("Hello, World!");
     }
 
     @Override

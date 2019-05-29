@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
     <TextView
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title" />
     <ImageView
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/image"
-        android:padding="20dp"/>
+        android:layout_height="wrap_content" />
     <LinearLayout
-        android:padding="10dp"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/likecount"
+            android:layout_margin="10dp"
+            android:id="@+id/commentcount"
+            android:text="comment: 0"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
         <TextView
-            android:id="@+id/commentcount"
+            android:layout_margin="10dp"
+            android:id="@+id/likes"
+            android:text="likes: 0"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
     </LinearLayout>
-    <Button
-        android:id="@+id/commentlist"
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/comment"
         android:text="comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -2,21 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#AAA">
+    android:layout_height="match_parent">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:text="community"
+        <Button
+            android:text="upload"
+            android:id="@+id/upload"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <EditText
+            android:text="search"
+            android:id="@+id/searchtext"
+            android:layout_width="250sp"
             android:layout_height="wrap_content" />
+        <Button
+            android:text="검색"
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>

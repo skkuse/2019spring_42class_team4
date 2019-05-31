@@ -6,38 +6,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.docking_milkyway.MainActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/bt5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="회원가입" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="50dp"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="마이페이지"
-            android:id="@+id/bt1"/>
+            android:text="Docking!"
+            android:id="@+id/bt1"
+            style="?android:attr/borderlessButtonStyle"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Docking!"
+            android:text="산책 하기"
             android:id="@+id/bt2"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="산책 기록"
             android:id="@+id/bt3"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="로그인"
-            android:id="@+id/bt4"/>
+
     </LinearLayout>
 
     <FrameLayout

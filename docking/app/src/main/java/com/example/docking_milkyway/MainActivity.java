@@ -1,89 +1,92 @@
 package com.example.docking_milkyway;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
-    Button bt1, bt2, bt3, bt4,bt5;
-    FragmentManager fm;
-    FragmentTransaction fragtrans;
-    Mypage mypage;
+    Button bt1, bt2, bt3;
+    FragmentManager fm ;
+    FragmentTransaction fragtrans ;
     Community community;
+    nowWalking nowwalking;
     Walking walking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.nav_main);
+
+        // set : toolbar and drawer
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+        Log.d("상아","메인 등장!");
+
+        // set : other menu buttons
+
         bt1 = (Button) findViewById(R.id.bt1);
         bt2 = (Button) findViewById(R.id.bt2);
         bt3 = (Button) findViewById(R.id.bt3);
-        bt4 = (Button) findViewById(R.id.bt4);
-        bt5 = (Button) findViewById(R.id.bt5);
-        bt1.setOnClickListener(this);
-        bt2.setOnClickListener(this);
-        bt3.setOnClickListener(this);
-        bt4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, login.class);
-                startActivity(intent);
-            }
-        });
-        bt5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, signin.class);
-                startActivity(intent);
-            }
-        });
-        mypage = new Mypage();
         community = new Community();
+        nowwalking = new nowWalking();
         walking = new Walking();
-        setFrag(1);
+        setFrag(0);
+
+        bt1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하", "버튼 1 눌림");
+                setFrag(0);
+                Log.d("은하" , "fragment 1로 전환했음");
+            }
+        });
+        bt2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하", "버튼 2 눌림");
+                setFrag(1);
+                Log.d("은하", "fragment 2로 전환했음");
+            }
+        });
+        bt3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하","버튼 3 눌림");
+                setFrag(2);
+                Log.d("은하","fragment 3으로 전환했음");
+            }
+        });
+        Log.d("상아","리스너 추가 완료");
 
         //firebase 연동 확인
         //FirebaseDatabase database = FirebaseDatabase.getInstance();
         //DatabaseReference myRef = database.getReference("message");
 
         //myRef.setValue("Hello, World!");
-    }
 
-    @Override
-    public void onClick(View v){
-        switch (v.getId()) {
-            case R.id.bt1:
-                Log.d("은하", "버튼 1 눌림");
-                setFrag(0);
-                Log.d("은하" , "fragment 1로 전환했음");
-                break;
-            case R.id.bt2:
-                Log.d("은하", "버튼 2 눌");
-                setFrag(1);
-                Log.d("은하", "fragment 2로 전환했음");
-                break;
-            case R.id.bt3:
-                Log.d("은하","버튼 3 눌림");
-                setFrag(2);
-                Log.d("은하","fragment 3으로 전환했음");
-                break;
-        }
     }
 
     private void setFrag(int n) {
@@ -91,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragtrans = fm.beginTransaction();
         switch (n) {
             case 0:
-                fragtrans.replace(R.id.main_frame, mypage);
+                fragtrans.replace(R.id.main_frame, community);
                 fragtrans.commit();
                 Log.d("은하", "fragment 1로 전환");
                 break;
             case 1:
-                fragtrans.replace(R.id.main_frame, community);
+                fragtrans.replace(R.id.main_frame, nowwalking);
                 fragtrans.commit();
                 Log.d("은하", "fragment 2로 전환");
                 break;
@@ -106,13 +109,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("은하", "fragment 3로 전환");
                 break;
         }
+    }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -130,4 +140,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return super.onOptionsItemSelected(item);
     }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_signin) {
+            Intent intent = new Intent(this, signin.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_login) {
+            Intent intent = new Intent(this, login.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_mypage) {
+            Intent intent = new Intent(this, Mypage.class);
+            startActivity(intent);
+        }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+
+
 }

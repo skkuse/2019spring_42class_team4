@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="221dp"
+        android:layout_height="54dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:text="산책메이트 매치에 성공하였습니다!" />
+
+    <TextView
+        android:layout_below="@+id/title"
+        android:id="@+id/matchedmateinfo"
+        android:layout_width="221dp"
+        android:layout_height="54dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:text="매치된 산책메이트 정보" />
+
+    <Button
+        android:layout_below="@+id/matchedmateinfo"
+        android:id="@+id/accept"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="수락"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:layout_below="@+id/accept"
+        android:id="@+id/reject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="거절"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+
+
+
+</RelativeLayout>

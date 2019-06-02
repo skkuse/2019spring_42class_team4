@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.docking_milkyway">
 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +28,7 @@
         </activity>
         <activity android:name=".login"></activity>
         <activity android:name=".signin"></activity>
+        <activity android:name=".Matching"></activity>
     </application>
 
 </manifest>

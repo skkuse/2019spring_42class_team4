@@ -1,21 +1,49 @@
 package com.example.docking_milkyway;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +52,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -33,6 +65,13 @@ import java.util.Date;
 import java.util.Locale;
 
 public class nowWalking extends Fragment {
+    // nowWalk : 산책중이 아닐 경우 false, 산책중인 경우 true
+    boolean isNowWalking = false;
+
+    // static var : save itself
+    public static nowWalking nowW;
+
+
     View view;
     Context context;
 
@@ -44,34 +83,50 @@ public class nowWalking extends Fragment {
     double lon = 126.98;
     String openWeatherMapApiKey = "0ee1e074bf0ef21fc295ffb1a78461d2";
 
-    // variables : about GPS connection
-    LocationManager locationManager;
-    Location location;
-    boolean isGpsEnabled = false;
-    boolean isGetLocation = false;
-    public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1000;
-    public static final long MIN_TIME_UPDATES = 1000 * 60 * 1;
+    LocationManager locaManager;
+    final int REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 225;
+
 
     // variable : 견종
     // 테스트값입니다 이후에 userDB에서 가져오는 형식으로 수정하겠습니다 0531상아
     String dogSpecies = "Labrador Retriever";
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("MissingPermission")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // load location
-        location = getLocation();
-        if (location != null) {
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-            Log.d("상아", "lat : "+String.valueOf(lat)+" / lon : "+String.valueOf(lon));
+        // static var : save itself
+        nowW = nowWalking.this;
+
+        if (!isNowWalking){
+            // 매칭할지 여부를 묻는 과정을 거침
+            askforMatch();
         }
 
+        // init locationManager and check permission
+        locaManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
+        if (getActivity().checkSelfPermission( Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION }, REQUEST_PERMISSION_ACCESS_FINE_LOCATION);
+        } else {
+            Log.d("상아", "nowWalk : fine location permission : granted" );
+        }
 
+        if (getActivity().checkSelfPermission( Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION }, REQUEST_PERMISSION_ACCESS_FINE_LOCATION);
+        } else {
+            Log.d("상아", "nowWalk : coarse location permission : granted" );
+        }
 
+        // load location
+        GPSHelper gpsHelper = new GPSHelper(context, locaManager);
+        lat = gpsHelper.getLatitude();
+        lon = gpsHelper.getLongitude();
+        Log.d("상아", "nowWalk : lat : "+lat+" / lon : "+lon);
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -94,14 +149,47 @@ public class nowWalking extends Fragment {
         // String ArrayList로 받아서 일단 프린트만 했습니다
         String dogAttriArray = getDogAttribute(dogSpecies);
         String tmpStr=dogAttriArray;
-      /*  for (String s : dogAttriArray){
-            tmpStr = tmpStr + s + "\t";
-        }*/
-        Log.d("상아","finished string : "+tmpStr);
+
+        Log.d("상아","nowWalk : finished string : "+tmpStr);
         dogAttribute.setText(tmpStr);
 
-
         return view;
+    }
+
+    // 산책 시작하기
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    void askforMatch()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.start_walking, null);
+        builder.setView(view);
+        final Button alonePlz = (Button) view.findViewById(R.id.alonePlz);
+        final Button matchPlz = (Button) view.findViewById(R.id.matchPlz);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        alonePlz.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(context.getApplicationContext(), "바로 산책을 시작합니다.", Toast.LENGTH_SHORT).show();
+                isNowWalking = true;
+                dialog.dismiss();
+
+            }
+        });
+        matchPlz.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(context.getApplicationContext(), "산책메이트 매칭을 시작합니다.", Toast.LENGTH_SHORT).show();
+                isNowWalking = true;
+                dialog.dismiss();
+                // start matching process
+                Intent intent = new Intent(getActivity(), Matching.class);
+                startActivity(intent);
+
+
+            }
+        });
+
     }
 
     // 네트워크 연결상태 체크
@@ -116,48 +204,12 @@ public class nowWalking extends Fragment {
             downloadWeather task = new downloadWeather();
             task.execute(URL);
         } else {
-            Log.d("상아","네트워크 사용이 불가하여 날씨정보를 받아오지 못함");
+            Log.d("상아","loadWeather : 네트워크 사용이 불가하여 날씨정보를 받아오지 못했습니다.");
         }
     }
 
-    // gps가 켜져있을경우 위치정보를 받아와서 기존 위치에 덧씌움
-    // 현재 작동하지 않음0531 - 이후 수정하도록 하겠습니다!
-    @SuppressLint("MissingPermission")
-    public Location getLocation(){
-        try{
-            locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-            // GPS 사용 가능한지 알아오기
-            isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-            // gps 사용 불가한 경우
-            if (!isGpsEnabled){
-                Toast.makeText(context.getApplicationContext(), "GPS를 사용할 수 없어 현재 날씨 정보를 받아올 수 없습니다.", Toast.LENGTH_LONG).show();
-            }
-            // gps 사용 가능한 경우
-            else {
-                Log.d("상아","get weatherinfo from GPS");
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener );
-                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                Log.d("상아","get weatherinfo from GPS success");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("상아", "exception occur : during get gps location");
-        }
-        return location;
-    }
-
-    private LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {      loadWeather(location.getLatitude(), location.getLongitude());   }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-        @Override
-        public void onProviderEnabled(String provider) {}
-        @Override
-        public void onProviderDisabled(String provider) {}
-    };
-
+    // 반려견의 견종으로 관련 정보들을 받아온다
     public String getDogAttribute(String DogSpecies){
         String json = null;
         ArrayList<String> dogAttribute = new ArrayList<String>();
@@ -170,25 +222,25 @@ public class nowWalking extends Fragment {
             is.read(buffer);
             is.close();
             json = new String(buffer, "UTF-8");
-            Log.d("상아","get dog.json from asset");
+            Log.d("상아","getDotAttri : get dog.json from asset");
 
             // make json object
             JSONObject obj = new JSONObject(json);
             // 해당하는 견종의 정보를 받아옴
             String dogArray = obj.getJSONObject("dog_breeds").getString(DogSpecies);
-            Log.d("상아","get info of test dogspecies");
+            Log.d("상아","getDotAttri : get info of test dogspecies");
 
             return dogArray;
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();
-            Log.d("상아","unsupported encoding");
+            Log.d("상아","getDotAttri : unsupported encoding");
         } catch (IOException ex) {
             ex.printStackTrace();
-            Log.d("상아","io exception");
+            Log.d("상아","getDotAttri : io exception");
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d("상아","json  exception");
+            Log.d("상아","getDotAttri : json  exception");
         }
         return "error";
 
@@ -272,7 +324,7 @@ public class nowWalking extends Fragment {
                 loader.setVisibility(View.GONE);
 
             } catch (JSONException e) {
-                Toast.makeText(context.getApplicationContext(), "Error, Check City", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context.getApplicationContext(), "날씨 정보를 받아오지 못했습니다.", Toast.LENGTH_SHORT).show();
             }
         }
 

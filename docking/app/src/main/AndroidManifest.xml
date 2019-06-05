@@ -29,6 +29,7 @@
         <activity android:name=".login"></activity>
         <activity android:name=".signin"></activity>
         <activity android:name=".Matching"></activity>
+        <activity android:name=".uploading"></activity>
     </application>
 
 </manifest>

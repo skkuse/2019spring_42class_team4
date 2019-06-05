@@ -9,10 +9,10 @@ public class ContentDB {
     int date;
     boolean tag;
     int like;
-    int userSSN;
+    String userSSN;
     ContentDB() {}
 
-    ContentDB(int SSN, String substance, String text, int date, boolean tag, int like, int userSSN) {
+    ContentDB(int SSN, String substance, String text, int date, boolean tag, int like, String userSSN) {
         this.SSN = SSN;
         this.substance = substance;
         this.text = text;
@@ -22,7 +22,18 @@ public class ContentDB {
         this.userSSN = userSSN;
     }
 
-    ContentDB(int SSN, String substance, String text, int date, int userSSN) {
+    //테스트용
+    ContentDB(String text, boolean tag, String userSSN){
+        this.SSN = 0;
+        this.substance = "substance";
+        this.text = text;
+        this.date = 190101;
+        this.tag = tag;
+        this.like = 0;
+        this.userSSN = userSSN;
+    }
+
+    ContentDB(int SSN, String substance, String text, int date, String userSSN) {
         this.SSN = SSN;
         this.substance = substance;
         this.text = text;
@@ -44,7 +55,7 @@ public class ContentDB {
     public int getdate() {return date;}
     public boolean gettag() {return tag;}
     public int getlike() {return like;}
-    public int getuserSSN() {return userSSN;}
+    public String getuserSSN() {return userSSN;}
 
     public void setSSN(int SSN) { this.SSN = SSN; }
     public void setSubstance(String substance) { this.substance = substance; }
@@ -52,5 +63,5 @@ public class ContentDB {
     public void setDate(int date) { this.date = date; }
     public void setTag(boolean tag) { this.tag = tag; }
     public void setLike(int like) { this.like = like; }
-    public void setUserSSN(int userSSN) { this.userSSN = userSSN; }
+    public void setUserSSN(String userSSN) { this.userSSN = userSSN; }
 }

@@ -11,22 +11,25 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private ArrayList<String> mData = null;
+    private ArrayList<ContentDB> mData = null;
 
     //아이템 뷰를 저장하는 뷰홀더 클래스
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView1;
+        TextView writer;
+        TextView likes;
+        TextView substance;
+        TextView contentstext;
 
         ViewHolder(View itemView) {
             super(itemView);
 
             //뷰 객체에 대한 참조. (hold strong reference)
-            textView1 = itemView.findViewById(R.id.title);
+            writer = itemView.findViewById(R.id.writer);
         }
     }
 
     //생성자에서 데이터 리스트 객체를 전달받음.
-    MyAdapter(ArrayList<String> list){
+    MyAdapter(ArrayList<ContentDB> list){
         mData = list;
         Log.d("은하", String.valueOf(mData.size()));
     }
@@ -46,9 +49,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     //on BindViewHolder() - Position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(MyAdapter.ViewHolder holder, int position) {
-        String text = mData.get(position);
-        holder.textView1.setText(text);
-        Log.d("은하", text);
+        ContentDB contentdb = mData.get(position);
+        holder.writer.setText(contentdb.getuserSSN());
+        Log.d("은하", contentdb.getuserSSN());
     }
 
     //getItemCount() - 전체 데이터 갯수 리턴.

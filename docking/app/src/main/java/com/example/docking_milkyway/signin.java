@@ -1,5 +1,6 @@
 package com.example.docking_milkyway;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +17,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-
+import com.google.firebase.firestore.auth.User;
 
 
 public class signin extends AppCompatActivity {
@@ -28,59 +28,6 @@ public class signin extends AppCompatActivity {
     private EditText pwinsert;
     private EditText nameinsert;
     private EditText nicknameinsert;
-
-    public class User{
-        private String email;
-        private String pw;
-        private String name;
-        private String nickname;
-        private int age;
-        private String user_type;
-        private String sex;
-
-
-        public User(){}
-
-        public User(String email, String pw, String name, String nickname, int age, String user_type, String sex) {
-            this.email = email;
-            this.pw = pw;
-            this.name = name;
-            this.nickname = nickname;
-            this.age = age;
-            this.user_type = user_type;
-            this.sex = sex;
-        }
-
-        public String getEmail(){
-            return this.email;
-        }
-
-        public String getPw() {
-            return pw;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getNickname() {
-            return nickname;
-        }
-        public int getAge() {
-            return age;
-        }
-
-        public String getUser_type() {
-            return user_type;
-        }
-
-        public String getSex() {
-            return sex;
-        }
-
-    }
-
-
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +56,8 @@ public class signin extends AppCompatActivity {
                 String user_type = "전문가";
                 String sex = "남성";
 
-                final User temp_user = new User(email,pw,name,nickname,age,user_type,sex);
-
+               // User temp_user = new UserDB(email,name,pw,nickname,age,sex,user_type);
+                UserDB temp_user = new UserDB(email,name,pw,nickname,age,sex,user_type);
                 //CollectionReference userRef = userDB.collection("user");
                 DocumentReference userRef = userDB.collection("user").document(email);
                 userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -124,6 +71,8 @@ public class signin extends AppCompatActivity {
                             }else{
                                 Log.d("login", "최초 계정!");
                                 userDB.collection("user").document(temp_user.getEmail()).set(temp_user);
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
                             }
                         }else{
                             Log.d("login", "get() failed");

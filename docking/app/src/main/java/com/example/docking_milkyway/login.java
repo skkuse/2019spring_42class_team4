@@ -52,6 +52,8 @@ public class login extends AppCompatActivity {
                         if(task.isSuccessful()){
                             DocumentSnapshot document = task.getResult();
                             if(document.exists()){
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
                                 Log.d("login", "계정 존재 확인");
                             }else{
                                 Toast.makeText(login.this, "계정이 존재하지 않습니다.", Toast.LENGTH_LONG).show();

@@ -2,6 +2,7 @@ package com.example.docking_milkyway;
 
 public class UserDB {
     String email;
+    String name;
     String pw;
     String nickname;
     int age;
@@ -13,17 +14,9 @@ public class UserDB {
     UserDB(){
     }
 
-    UserDB(String email, String pw, String nickname, String usertype){
+    UserDB(String email, String name, String pw, String nickname, int age, String sex, String usertype){
         this.email = email;
-        this.pw = pw;
-        this.nickname = nickname;
-        this.age = 0;
-        this.sex = "null";
-        this.usertype = usertype;
-    }
-
-    UserDB(int SSN, String email, String pw, String nickname, int age, String sex, String usertype){
-        this.email = email;
+        this.name = name;
         this.pw = pw;
         this.nickname = nickname;
         this.age = age;
@@ -31,23 +24,62 @@ public class UserDB {
         this.usertype = usertype;
     }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
 
-    public String getPw() { return pw; }
-    public void setPw(String pw) { this.pw = pw; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public int getAge() { return age; }
-    public void setAge(int age) { this.age = age; }
+    public String getName() {
+        return name;
+    }
 
-    public String getSex() { return sex; }
-    public void setSex(String sex) { this.sex = sex; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getUsertype() { return usertype; }
-    public void setUsertype(String usertype) { this.usertype = usertype; }
+    public String getPw() {
+        return pw;
+    }
+
+    public void setPw(String pw) {
+        this.pw = pw;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getUsertype() {
+        return usertype;
+    }
+
+    public void setUsertype(String usertype) {
+        this.usertype = usertype;
+    }
 
     public int getCount() {
         return count;

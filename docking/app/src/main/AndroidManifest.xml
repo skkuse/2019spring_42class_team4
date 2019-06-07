@@ -30,6 +30,9 @@
         <activity android:name=".signin"></activity>
         <activity android:name=".Matching"></activity>
         <activity android:name=".uploading"></activity>
+        <activity android:name=".Mypage"></activity>
+        <activity android:name=".view_history"></activity>
+        <activity android:name=".my_info"></activity>
     </application>
 
 </manifest>

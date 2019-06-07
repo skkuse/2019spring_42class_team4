@@ -3,7 +3,9 @@ package com.example.docking_milkyway;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,8 +28,9 @@ public class MainActivity extends AppCompatActivity
     FragmentTransaction fragtrans ;
     Community community;
     nowWalking nowwalking;
-    Walking walking;
+    Walking walking;;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +49,6 @@ public class MainActivity extends AppCompatActivity
         Log.d("상아","메인 등장!");
 
         // set : other menu buttons
-
         bt1 = (Button) findViewById(R.id.bt1);
         bt2 = (Button) findViewById(R.id.bt2);
         bt3 = (Button) findViewById(R.id.bt3);
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity
         nowwalking = new nowWalking();
         walking = new Walking();
         setFrag(0);
+
 
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override

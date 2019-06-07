@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.UserHandle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -48,6 +49,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.core.FirestoreClient;
+import com.google.firestore.v1.WriteResult;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,37 +65,95 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class nowWalking extends Fragment {
+
     // nowWalk : 산책중이 아닐 경우 false, 산책중인 경우 true
     boolean isNowWalking = false;
 
     // static var : save itself
     public static nowWalking nowW;
 
-
     View view;
     Context context;
 
     // variables : about weather value
-    TextView cityField, detailsField, currentTemperatureField;
-    TextView weatherIcon, updatedField, dogAttribute;
+    TextView cityField, detailsField, currentTemperatureField, weatherIcon, updatedField, dogAttribute;
     ProgressBar loader;
-    double lat = 37.54;
-    double lon = 126.98;
+    double lat = 37.292047;
+    double lon = 126.976890;
     String openWeatherMapApiKey = "0ee1e074bf0ef21fc295ffb1a78461d2";
-
     LocationManager locaManager;
     final int REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 225;
 
+    // variables : gps helper
+    GPSHelper gpsHelper;
+
+    // variables : about record walking
+    TextView startTime, endTime, elaspeTime, Distance;
+    boolean isFirstRecording = true;
+    boolean stopRecoding = false;
+    WalkRecorder recorder = new WalkRecorder();
+    Thread recorderThread = new Thread();
+    Button finishWalking;
+
+    @SuppressLint("HandlerLeak")
+    final Handler timehandler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        public void handleMessage(Message msg){
+            // 현재 시간 - 시작 시간 하여 지속 시간 구하기
+            LocalDateTime nowtime = LocalDateTime.now();
+            Duration elaspe= Duration.between(recorder.starttime, nowtime);
+            recorder.elaspetime = elaspe.getSeconds();
+            Integer elaspeMin = (int) recorder.elaspetime / 60;
+            Integer elaspeSec = (int) recorder.elaspetime % 60;
+            elaspeTime.setText(elaspeMin + "분 " + elaspeSec+"초");
+            Log.d("상아",elaspeMin + "분 " + elaspeSec+"초");
+        }
+    };
+
+    @SuppressLint("HandlerLeak")
+    final Handler distancehandler = new Handler() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        public void handleMessage(Message msg) {
+            // 현재 위치 구하고, 현재 위치 - 이전 위치 하여 거리에 더하기
+            // gps에서 받아와진 경우에만 실행되도록 한다! (수정)
+
+            // 이전 위치 설정
+            recorder.prevGPS[0] = recorder.thisGPS[0];
+            recorder.prevGPS[1] = recorder.thisGPS[1];
+            // 현재 위치 갱신
+            gpsHelper.getlocation();
+            lat = gpsHelper.getLatitude();
+            lon = gpsHelper.getLongitude();
+            recorder.thisGPS[0] = lat;
+            recorder.thisGPS[1] = lon;
+            // calculate
+            double addDistance = getDistance(recorder.prevGPS[0], recorder.prevGPS[1], recorder.thisGPS[0] , recorder.thisGPS[1]);
+            recorder.distance += addDistance;
+            Log.d("상아","distance : " + recorder.distance+ " / add : " + addDistance);
+
+        }
+    };
 
     // variable : 견종
     // 테스트값입니다 이후에 userDB에서 가져오는 형식으로 수정하겠습니다 0531상아
     String dogSpecies = "Labrador Retriever";
+
+    // --------------------------------------------------------------------------------------------------------------------------------------//
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
@@ -121,12 +185,20 @@ public class nowWalking extends Fragment {
         }
 
         // load location
-        GPSHelper gpsHelper = new GPSHelper(context, locaManager);
+        gpsHelper = new GPSHelper(context, locaManager);
         lat = gpsHelper.getLatitude();
         lon = gpsHelper.getLongitude();
         Log.d("상아", "nowWalk : lat : "+lat+" / lon : "+lon);
+
+        // start to record walking
+        Log.d("상아","시작시간 기록 (onCreate)");
+        startRecording();
+
+
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -141,9 +213,23 @@ public class nowWalking extends Fragment {
         weatherIcon = (TextView) view.findViewById(R.id.weather_icon);
         loader = (ProgressBar) view.findViewById(R.id.loader);
         dogAttribute = (TextView) view.findViewById(R.id.dog_attribute);
+        startTime = (TextView) view.findViewById(R.id.startTime);
+        elaspeTime = (TextView) view.findViewById(R.id.elapseTime);
+        Distance = (TextView) view.findViewById(R.id.distance);
+        finishWalking = (Button) view.findViewById(R.id.finishWalking);
 
         // load weather
         loadWeather(lat, lon);
+
+        // set startime
+        startTime.setText(recorder.starttime.getHour() + "시" + recorder.starttime.getMinute() + "분");
+
+        // set finish Walking button
+        finishWalking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {       endRecording();      }
+        });
+
 
         // read dogattribute
         // String ArrayList로 받아서 일단 프린트만 했습니다
@@ -156,10 +242,41 @@ public class nowWalking extends Fragment {
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("상아","경과시간 기록(onResume)");
+        keepRecording();
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("상아","onPause");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("상아","onStop");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("상아","onDestroy");
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------------------//
+
+    // method : about matching
     // 산책 시작하기
     @RequiresApi(api = Build.VERSION_CODES.O)
-    void askforMatch()
-    {
+    void askforMatch(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.start_walking, null);
@@ -185,13 +302,14 @@ public class nowWalking extends Fragment {
                 // start matching process
                 Intent intent = new Intent(getActivity(), Matching.class);
                 startActivity(intent);
-
-
             }
         });
 
     }
 
+    // --------------------------------------------------------------------------------------------------------------------------------------//
+
+    // method : about weather
     // 네트워크 연결상태 체크
     public static boolean checkNetwork(Context context) {
         return ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo() != null;
@@ -208,7 +326,9 @@ public class nowWalking extends Fragment {
         }
     }
 
+    // --------------------------------------------------------------------------------------------------------------------------------------//
 
+    // method : about dog attribute --> this inforamtion care about : warning toast message / matching process
     // 반려견의 견종으로 관련 정보들을 받아온다
     public String getDogAttribute(String DogSpecies){
         String json = null;
@@ -245,6 +365,185 @@ public class nowWalking extends Fragment {
         return "error";
 
     }
+
+    // --------------------------------------------------------------------------------------------------------------------------------------//
+
+    // 산책을 시작하고 시작시간과 처음 위치를 측정한다
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void startRecording(){
+        if (isFirstRecording){
+            Log.d("상아","첫 기록입니다. 시작 시간을 기록합니다.");
+            // 시작 시간 기록
+            recorder.starttime = LocalDateTime.now();
+            Log.d("상아", "start record : "+recorder.starttime.toString());
+
+            // 처음 위치 기록
+            gpsHelper.getlocation();
+            lat = gpsHelper.getLatitude();
+            lon = gpsHelper.getLongitude();
+            recorder.thisGPS[0]=lat;
+            recorder.thisGPS[1]=lon;
+            Log.d("상아","start record : lat : "+lat+" / lon"+lon);
+
+            // setting
+            stopRecoding = false;
+        }
+        else{
+            Log.d("상아","첫 기록이 아닙니다. 기존 시작 시간을 사용합니다.");
+        }
+    }
+
+    // 경과 시간과 거리를 지속적으로 측정한다
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void keepRecording(){
+        recorderThread= new Thread(){
+            public void run(){
+                if (isFirstRecording){
+                    isFirstRecording = false;
+                    int tmpFlag = 0;
+                    while(true){
+                        tmpFlag = (tmpFlag+1)%5;
+                        if(stopRecoding){       break;                  }
+                        try{                    sleep(1000);      }
+                        catch (Exception e) {   e.printStackTrace();    }
+                        // time : 1초마다 갱신
+                        timehandler.sendEmptyMessage(0);
+                        // time : 5초마다 갱신
+                        if (tmpFlag==0){
+                            distancehandler.sendEmptyMessage(0);
+                        }
+                    }
+                }
+            }
+        };
+        recorderThread.start();
+    }
+
+    // 산책을 종료하고 시작시간, 경과시간, 거리, 종료시간을 firebase에 저장한다
+    public void endRecording(){
+        Toast.makeText(context.getApplicationContext(), "산책을 완료합니다.", Toast.LENGTH_SHORT).show();
+
+        // 산책한 정보 정리
+        recorder.endtime = LocalDateTime.now();
+        Duration elaspe= Duration.between(recorder.starttime, recorder.endtime);
+        recorder.elaspetime = elaspe.getSeconds();      // 초 단위로 저장
+
+
+        // WalkingDB object로 저장
+        Timestamp stTime    = LocalDateTimeToTimestamp(recorder.starttime);
+        Timestamp enTime    = LocalDateTimeToTimestamp(recorder.endtime);
+        int elTime          = (int)recorder.elaspetime;
+        int disT            = (int)recorder.distance;
+        int d_SSN = 1111;    // 이후 사용자 정보 가져와서 연결되면 기입
+        final WalkingDB tmp_Walk = new WalkingDB(stTime, enTime, elTime, disT, d_SSN);
+
+        // 현재정보를 파이어베이스에 저장
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String docupath = "testsaver";      // 문서 이름 수정하기
+        db.collection("Walking").document(docupath).set(tmp_Walk);
+
+
+
+
+        Toast.makeText(context.getApplicationContext(), "오늘의 산책을 저장하였습니다.", Toast.LENGTH_SHORT).show();
+        Log.d("상아","산책 저장 완료");
+
+        isNowWalking = false;
+        isFirstRecording = true;
+        stopRecoding = true;
+        recorder = new WalkRecorder();
+        recorderThread.interrupt();
+
+        startTime.setText("00시00분");
+        elaspeTime.setText("00분00초");
+        Distance.setText("00.00km");
+
+    }
+
+    // locatdatetime -> timestamp
+    public Timestamp LocalDateTimeToTimestamp (LocalDateTime ldt){
+        char[] tmpChar = ldt.toString().toCharArray();
+        String tmpStr = "";
+        for (char i : tmpChar){
+            String j = Character.toString(i);
+            if (i == 'T'){  tmpStr=tmpStr+" ";    }
+            else{           tmpStr=tmpStr+j;        }
+            System.out.println(j);
+        }
+        System.out.println(tmpStr+" test1");
+        Timestamp result = Timestamp.valueOf(tmpStr);
+        return result;
+    }
+
+    // GPS lat, lon -> distance
+    // reference : https://raw.githubusercontent.com/janantala/GPS-distance/master/java/Distance.java
+    public static double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        double a = 6378137, b = 6356752.314245, f = 1 / 298.257223563;
+        double L = Math.toRadians(lon2 - lon1);
+        double U1 = Math.atan((1 - f) * Math.tan(Math.toRadians(lat1)));
+        double U2 = Math.atan((1 - f) * Math.tan(Math.toRadians(lat2)));
+        double sinU1 = Math.sin(U1), cosU1 = Math.cos(U1);
+        double sinU2 = Math.sin(U2), cosU2 = Math.cos(U2);
+        double cosSqAlpha;
+        double sinSigma;
+        double cos2SigmaM;
+        double cosSigma;
+        double sigma;
+
+        double lambda = L, lambdaP, iterLimit = 100;
+        do
+        {
+            double sinLambda = Math.sin(lambda), cosLambda = Math.cos(lambda);
+            sinSigma = Math.sqrt(	(cosU2 * sinLambda)
+                    * (cosU2 * sinLambda)
+                    + (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda)
+                    * (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda)
+            );
+            if (sinSigma == 0)
+            {
+                return 0;
+            }
+
+            cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
+            sigma = Math.atan2(sinSigma, cosSigma);
+            double sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
+            cosSqAlpha = 1 - sinAlpha * sinAlpha;
+            cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cosSqAlpha;
+
+            double C = f / 16 * cosSqAlpha * (4 + f * (4 - 3 * cosSqAlpha));
+            lambdaP = lambda;
+            lambda = 	L + (1 - C) * f * sinAlpha
+                    * 	(sigma + C * sinSigma
+                    * 	(cos2SigmaM + C * cosSigma
+                    * 	(-1 + 2 * cos2SigmaM * cos2SigmaM)
+            )
+            );
+
+        } while (Math.abs(lambda - lambdaP) > 1e-12 && --iterLimit > 0);
+
+        if (iterLimit == 0)
+        {
+            return 0;
+        }
+
+        double uSq = cosSqAlpha * (a * a - b * b) / (b * b);
+        double A = 1 + uSq / 16384
+                * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+        double B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+        double deltaSigma =
+                B * sinSigma
+                        * (cos2SigmaM + B / 4
+                        * (cosSigma
+                        * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM
+                        * (-3 + 4 * sinSigma * sinSigma)
+                        * (-3 + 4 * cos2SigmaM * cos2SigmaM)));
+
+        double s = b * A * (sigma - deltaSigma);
+
+        return s;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------------------//
 
 
     class downloadWeather extends AsyncTask< String, Void, String > {
@@ -323,7 +622,9 @@ public class nowWalking extends Fragment {
                 // 로딩바
                 loader.setVisibility(View.GONE);
 
-            } catch (JSONException e) {
+            } catch (JSONException e1) {
+                Toast.makeText(context.getApplicationContext(), "날씨 정보를 받아오지 못했습니다.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e2){
                 Toast.makeText(context.getApplicationContext(), "날씨 정보를 받아오지 못했습니다.", Toast.LENGTH_SHORT).show();
             }
         }

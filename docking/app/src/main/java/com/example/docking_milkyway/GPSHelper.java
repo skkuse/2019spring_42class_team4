@@ -71,12 +71,12 @@ public class GPSHelper extends Service implements LocationListener {
         }
 
         try {
-            // if Net Enabled - get location using Net
-            if (isNetEnabled) {
-                locaManager.requestLocationUpdates(locaManager.NETWORK_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+            // if gps Enabled = get location using Gps
+            if (isGpsEnabled) {
+                locaManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 if (locaManager != null) {
-                    loca = locaManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    Log.d("상아", "getlocation :네트워크로 위치정보 가져오기 성공");
+                    loca = locaManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    Log.d("상아", "getlocation :GPS로 위치정보 가져오기 성공");
                     if (loca != null) {
                         lat = loca.getLatitude();
                         lon = loca.getLongitude();
@@ -85,12 +85,12 @@ public class GPSHelper extends Service implements LocationListener {
                 }
             }
 
-            // else if gps Enabled = get location using Gps
-            else if (isGpsEnabled) {
-                locaManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+            // else if Net Enabled = get location using Net
+            else if (isNetEnabled) {
+                locaManager.requestLocationUpdates(locaManager.NETWORK_PROVIDER, MIN_TIME_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 if (locaManager != null) {
-                    loca = locaManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    Log.d("상아", "getlocation :GPS로 위치정보 가져오기 성공");
+                    loca = locaManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    Log.d("상아", "getlocation :네트워크로 위치정보 가져오기 성공");
                     if (loca != null) {
                         lat = loca.getLatitude();
                         lon = loca.getLongitude();

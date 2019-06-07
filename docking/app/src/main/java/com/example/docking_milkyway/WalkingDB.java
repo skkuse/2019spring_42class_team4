@@ -1,50 +1,57 @@
 package com.example.docking_milkyway;
 
+import java.sql.Timestamp;
+
 public class WalkingDB {
 
-    int starttime;
-    int endtime;
+    Timestamp starttime;
+    Timestamp endtime;
     int elapsetime;
-    int Dog_SSN;
+    int dogssn;
+    int distance;
 
     public WalkingDB() { }
 
-    public WalkingDB(int starttime, int endtime, int elapsetime, int dog_SSN) {
+    public WalkingDB(Timestamp starttime, Timestamp endtime, int elapsetime, int distance, int dogssn) {
         this.starttime = starttime;
         this.endtime = endtime;
         this.elapsetime = elapsetime;
-        Dog_SSN = dog_SSN;
+        this.distance = distance;
+        this.dogssn = dogssn;
     }
 
-    public int getStarttime() {
+    public Timestamp getStarttime() {
         return starttime;
     }
-
-    public void setStarttime(int starttime) {
+    public void setStarttime(Timestamp starttime) {
         this.starttime = starttime;
     }
 
-    public int getEndtime() {
+    public Timestamp getEndtime() {
         return endtime;
     }
-
-    public void setEndtime(int endtime) {
+    public void setEndtime(Timestamp endtime) {
         this.endtime = endtime;
     }
 
     public int getElapsetime() {
         return elapsetime;
     }
-
     public void setElapsetime(int elapsetime) {
         this.elapsetime = elapsetime;
     }
 
-    public int getDog_SSN() {
-        return Dog_SSN;
+    public int getDistance() {
+        return distance;
+    }
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 
-    public void setDog_SSN(int dog_SSN) {
-        Dog_SSN = dog_SSN;
+    public int getDogssn() {
+        return dogssn;
+    }
+    public void setDogssn(int dogssn) {
+        this.dogssn = dogssn;
     }
 }

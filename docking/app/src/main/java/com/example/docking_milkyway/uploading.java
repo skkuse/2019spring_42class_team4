@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class uploading extends AppCompatActivity {
@@ -81,17 +82,18 @@ public class uploading extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             if(document.exists()){
                                 Log.d("은하", "contents document list 존재 확인");
-                                List list = (List) document.getData().get("list");
-                                int SSN = list.size();
-                                temp_content.setSSN(SSN);
-                                list.add(temp_content);
-                                contentDB.collection("Contents").document(userid).set(list);
-                                //이 부분에서 에러 있는듯...java compile error_Hashmap과 관련있는듯함
+                                int contentssize = (int) document.getData().get("contentssize");
+                                int SSN = contentssize;
+                                temp_content.SSN = SSN;
+                                contentDB.collection("Contents").document(userid)
+                                        .collection(userid).document(String.valueOf(SSN)).set(temp_content);
+                                contentssize++;
+                                //contentssize update to firebase
                             }else{
                                 Log.d("은하", "최초 게시글");
                                 ArrayList<ContentDB> list = new ArrayList<>();
                                 int SSN = 0;
-                                temp_content.setSSN(SSN);
+                                temp_content.SSN = SSN;
                                 list.add(temp_content);
                                 contentDB.collection("Contents").document(userid).set(list);
                             }

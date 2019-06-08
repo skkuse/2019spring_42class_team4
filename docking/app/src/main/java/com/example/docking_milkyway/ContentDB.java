@@ -2,17 +2,19 @@ package com.example.docking_milkyway;
 
 //
 
+import java.util.Date;
+
 public class ContentDB {
     int SSN;
     String substance;
     String text;
-    int date;
+    Date date;
     boolean tag;
     int like;
     String userSSN;
     ContentDB() {}
 
-    ContentDB(int SSN, String substance, String text, int date, boolean tag, int like, String userSSN) {
+    ContentDB(int SSN, String substance, String text, Date date, boolean tag, int like, String userSSN) {
         this.SSN = SSN;
         this.substance = substance;
         this.text = text;
@@ -27,13 +29,12 @@ public class ContentDB {
         this.SSN = 0;
         this.substance = "substance";
         this.text = text;
-        this.date = 190101;
         this.tag = tag;
         this.like = 0;
         this.userSSN = userSSN;
     }
 
-    ContentDB(int SSN, String substance, String text, int date, String userSSN) {
+    ContentDB(int SSN, String substance, String text, Date date, String userSSN) {
         this.SSN = SSN;
         this.substance = substance;
         this.text = text;
@@ -52,15 +53,15 @@ public class ContentDB {
     public String gettitle() {return text;}
     public String getsubstance() {return substance;}
     public String gettext() {return substance;}
-    public int getdate() {return date;}
+    public Date getdate() {return date;}
     public boolean gettag() {return tag;}
     public int getlike() {return like;}
     public String getuserSSN() {return userSSN;}
 
-    public void setSSN(int SSN) { this.SSN = SSN; }
+    //public void setSSN(int SSN) { this.SSN = SSN; }
     public void setSubstance(String substance) { this.substance = substance; }
     public void setText(String text) { this.text = text; }
-    public void setDate(int date) { this.date = date; }
+    public void setDate(Date date) { this.date = date; }
     public void setTag(boolean tag) { this.tag = tag; }
     public void setLike(int like) { this.like = like; }
     public void setUserSSN(String userSSN) { this.userSSN = userSSN; }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -74,6 +75,10 @@ public class uploading extends AppCompatActivity {
                     tag = true;
                 }
 
+                if(TextUtils.isEmpty(text)){
+                    Toast.makeText(v.getContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
+                }
+
                 ContentDB temp_content = new ContentDB(text, tag, userid);
 
                 DocumentReference contentsRef = contentDB.collection("Contents").document(userid);
@@ -87,6 +92,7 @@ public class uploading extends AppCompatActivity {
                                 long newcontentssize = (long) document.getData().get("contentssize");
                                 int SSN = (int) newcontentssize;
                                 temp_content.SSN = SSN;
+                                temp_content.setText(text);
                                 contentDB.collection("Contents").document(userid)
                                         .collection(userid).document(String.valueOf(SSN)).set(temp_content);
                                 //contentssize update to firebase
@@ -100,6 +106,7 @@ public class uploading extends AppCompatActivity {
                                 ArrayList<ContentDB> list = new ArrayList<>();
                                 int SSN = 0;
                                 temp_content.SSN = SSN;
+                                temp_content.setText(text);
                                 list.add(temp_content);
                                 contentDB.collection("Contents").document(userid).set(list);
                                 //contentssize setting to firebase

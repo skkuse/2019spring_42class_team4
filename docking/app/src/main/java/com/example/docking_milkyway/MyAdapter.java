@@ -25,6 +25,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
             //뷰 객체에 대한 참조. (hold strong reference)
             writer = itemView.findViewById(R.id.writer);
+            likes = itemView.findViewById(R.id.likes);
+            contentstext = itemView.findViewById(R.id.contentstext);
         }
     }
 
@@ -51,7 +53,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(MyAdapter.ViewHolder holder, int position) {
         ContentDB contentdb = mData.get(position);
         holder.writer.setText(contentdb.getuserSSN());
-        Log.d("은하", contentdb.getuserSSN());
+        holder.contentstext.setText(contentdb.gettext());
+        String thislike = Integer.toString(contentdb.getlike());
+        holder.likes.setText(thislike);
+        Log.d("은하", contentdb.getuserSSN()+", "+contentdb.gettext()+", "+contentdb.getlike());
     }
 
     //getItemCount() - 전체 데이터 갯수 리턴.

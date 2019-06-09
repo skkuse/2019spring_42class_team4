@@ -50,9 +50,9 @@ public class ContentDB {
         this.text = text;
     }
 
-    public String gettitle() {return text;}
+    //public int getSSN() {return SSN;}
     public String getsubstance() {return substance;}
-    public String gettext() {return substance;}
+    public String gettext() {return text;}
     public Date getdate() {return date;}
     public boolean gettag() {return tag;}
     public int getlike() {return like;}
@@ -65,4 +65,10 @@ public class ContentDB {
     public void setTag(boolean tag) { this.tag = tag; }
     public void setLike(int like) { this.like = like; }
     public void setUserSSN(String userSSN) { this.userSSN = userSSN; }
+
+    @Override
+    public String toString() {
+        String thisstring = "SSN:"+SSN+",text:"+text;
+        return thisstring;
+    }
 }

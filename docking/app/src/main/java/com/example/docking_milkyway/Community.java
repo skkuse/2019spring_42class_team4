@@ -101,6 +101,7 @@ public class Community extends Fragment {
                                         if(contentdocument.exists()){
                                             Log.d("은하", contentdocument.toString());
                                             ContentDB data = (ContentDB) contentdocument.toObject(ContentDB.class);
+                                            Log.d("은하", "data: "+data.toString());
                                             recyclerlist.add(data);
                                             Log.d("은하", "여기 recyclerlist: "+recyclerlist);
                                             if(finalI ==contentssize-1){

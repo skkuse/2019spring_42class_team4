@@ -56,6 +56,7 @@ public class Community extends Fragment {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(getActivity(), uploading.class);
+                Log.d("은하", "go uploading activity");
                 startActivity(intent);
             }
         });
@@ -81,10 +82,12 @@ public class Community extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
                         Log.d("은하", "사용자 아이디에 해당하는 게시물 있음");
+                        Log.d("은하", "document : "+document.getData());
 
-                        ArrayList<ContentDB> contentsdata = new ArrayList<>();
-                        //int contentssize = (int) document.getData().get("contentssize");
-                        int contentssize=2;
+                        ///ArrayList<ContentDB> contentsdata = new ArrayList<>();
+                        long contentssize = (long) document.getData().get("contentssize");
+                        Log.d("은하", "contentssize : "+contentssize);
+                        //int contentssize=2;
                         for(int i=0 ; i < contentssize ; i++){
                             DocumentReference contentsRef = contentsDB.collection("Contents")
                                     .document(userid).collection(userid).document(String.valueOf(i));

@@ -30,6 +30,7 @@ public class uploading extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.uploading);
+        Log.d("은하", "in uploading");
 
         final FirebaseFirestore contentDB = FirebaseFirestore.getInstance();
 
@@ -66,6 +67,7 @@ public class uploading extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String userid = "1002galaxy@gmail.com"; //테스트 위함, 임시
+                Log.d("은하", "uploadbtn click");
                 String text = textinsert.getText().toString();
                 Boolean tag=false;
                 if(taginsert.getText().toString().length() > 0){
@@ -82,13 +84,17 @@ public class uploading extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             if(document.exists()){
                                 Log.d("은하", "contents document list 존재 확인");
-                                int contentssize = (int) document.getData().get("contentssize");
-                                int SSN = contentssize;
+                                long newcontentssize = (long) document.getData().get("contentssize");
+                                int SSN = (int) newcontentssize;
                                 temp_content.SSN = SSN;
                                 contentDB.collection("Contents").document(userid)
                                         .collection(userid).document(String.valueOf(SSN)).set(temp_content);
-                                contentssize++;
                                 //contentssize update to firebase
+                                newcontentssize++;
+                                contentDB.collection("Contents")
+                                        .document(userid).update("contentssize", newcontentssize);
+                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                startActivity(intent);
                             }else{
                                 Log.d("은하", "최초 게시글");
                                 ArrayList<ContentDB> list = new ArrayList<>();
@@ -96,9 +102,11 @@ public class uploading extends AppCompatActivity {
                                 temp_content.SSN = SSN;
                                 list.add(temp_content);
                                 contentDB.collection("Contents").document(userid).set(list);
+                                //contentssize setting to firebase
+                                //contentDB.collection("Contents").document(userid).set("contentssize", 1);
+                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                startActivity(intent);
                             }
-                            Intent intent = new Intent(v.getContext(), MainActivity.class);
-                            startActivity(intent);
                         }else{
                             Log.d("은하", "get() failed");
                         }

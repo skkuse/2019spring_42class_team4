@@ -253,6 +253,14 @@ public class uploading extends AppCompatActivity {
             }
         });
 
+        getcamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //카메라 접근
+                takePhoto();
+            }
+        });
+
         uploadok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

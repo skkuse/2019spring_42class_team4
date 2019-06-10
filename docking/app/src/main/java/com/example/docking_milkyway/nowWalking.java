@@ -129,9 +129,6 @@ public class nowWalking extends Fragment {
     final Handler distancehandler = new Handler() {
         @RequiresApi(api = Build.VERSION_CODES.O)
         public void handleMessage(Message msg) {
-            // 현재 위치 구하고, 현재 위치 - 이전 위치 하여 거리에 더하기
-            // gps에서 받아와진 경우에만 실행되도록 한다! (수정)
-
             // 이전 위치 설정
             recorder.prevGPS[0] = recorder.thisGPS[0];
             recorder.prevGPS[1] = recorder.thisGPS[1];
@@ -141,10 +138,15 @@ public class nowWalking extends Fragment {
             lon = gpsHelper.getLongitude();
             recorder.thisGPS[0] = lat;
             recorder.thisGPS[1] = lon;
+            // 현재 위치 {lat,lon}을 walklog에 add한다
+            recorder.walkLog.add(recorder.thisGPS);
+            Log.d("상아","현재의 lat :"+lat+" / lon :"+lon);
             // calculate
             double addDistance = getDistance(recorder.prevGPS[0], recorder.prevGPS[1], recorder.thisGPS[0] , recorder.thisGPS[1]);
             recorder.distance += addDistance;
             Log.d("상아","distance : " + recorder.distance+ " / add : " + addDistance);
+
+            Distance.setText(recorder.distance + "m");
 
         }
     };
@@ -357,7 +359,6 @@ public class nowWalking extends Fragment {
         } catch (IOException ex) {
             ex.printStackTrace();
             Log.d("상아","getDotAttri : io exception");
-
         } catch (JSONException e) {
             e.printStackTrace();
             Log.d("상아","getDotAttri : json  exception");
@@ -381,6 +382,8 @@ public class nowWalking extends Fragment {
             gpsHelper.getlocation();
             lat = gpsHelper.getLatitude();
             lon = gpsHelper.getLongitude();
+            double[] latlon = {lat, lon};
+            recorder.walkLog.add(latlon);
             recorder.thisGPS[0]=lat;
             recorder.thisGPS[1]=lon;
             Log.d("상아","start record : lat : "+lat+" / lon"+lon);
@@ -428,6 +431,21 @@ public class nowWalking extends Fragment {
         Duration elaspe= Duration.between(recorder.starttime, recorder.endtime);
         recorder.elaspetime = elaspe.getSeconds();      // 초 단위로 저장
 
+        // 저장했던 walklog의 distance 계산
+        /*int walkLogLen = recorder.walkLog.size();
+        for (int i=0 ; i<walkLogLen-1 ; i++){
+            double[] nowP = recorder.walkLog.get(i);
+            double[] nextP = recorder.walkLog.get(i+1);
+            double smallDistance = getDistance(nowP[0], nowP[1], nextP[0], nextP[1]);
+            recorder.distance += smallDistance;         // 미터 단위로 저장
+        }*/
+
+        // 저장했던 walklog들을 ArrayList<Double> lat0, lon0, lat1, lon1, lat2, lon2, ...}으로 변환
+        ArrayList<Double> walkLogArr = new ArrayList<>();
+        for (double[] i : recorder.walkLog){
+            walkLogArr.add(i[0]);
+            walkLogArr.add(i[1]);
+        }
 
         // WalkingDB object로 저장
         Timestamp stTime    = LocalDateTimeToTimestamp(recorder.starttime);
@@ -435,12 +453,21 @@ public class nowWalking extends Fragment {
         int elTime          = (int)recorder.elaspetime;
         int disT            = (int)recorder.distance;
         int d_SSN = 1111;    // 이후 사용자 정보 가져와서 연결되면 기입
-        final WalkingDB tmp_Walk = new WalkingDB(stTime, enTime, elTime, disT, d_SSN);
+        final WalkingDB tmp_Walk = new WalkingDB(stTime, enTime, elTime, disT, d_SSN, walkLogArr);
 
         // 현재정보를 파이어베이스에 저장
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String docupath = "testsaver";      // 문서 이름 수정하기
-        db.collection("Walking").document(docupath).set(tmp_Walk);
+
+        // 문서이름을 산책 끝 시간으로 정하기
+        int m = recorder.endtime.getMonthValue();
+        int d = recorder.endtime.getDayOfMonth();
+        int h = recorder.endtime.getHour();
+        int n = recorder.endtime.getMinute();
+        String userID = "shapizz@naver.com";      // 문서 이름 유저아이디로 수정하기
+        db.collection("Walking").document(userID).set(tmp_Walk);
+        // wNum <- db.colletion("Walking").document(userID).get(length)
+        // wNum++1 -> 다시 set 하고
+        // db.collection("Walking").document(userID).collection(userID), document("h"+wNum) 하도록 수정하겠습니다
 
 
 

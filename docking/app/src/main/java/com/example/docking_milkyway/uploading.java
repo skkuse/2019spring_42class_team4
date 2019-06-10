@@ -165,7 +165,7 @@ public class uploading extends AppCompatActivity {
     private void goToAlbum() {
         isCamera = false;
         Intent intent = new Intent();
-        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         Log.d("은하", "앨범 접근 성공");
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_FROM_ALBUM);

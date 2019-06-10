@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.firebase:firebase-firestore:19.0.0@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e1a09ae04069a7844f771fa9c6b2dc89/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e1a09ae04069a7844f771fa9c6b2dc89/res" />
+      <root url="file://C:/Android_studio/caches/transforms-2/files-2.1/9ef41616dad319b2decbaa6e9c20dd2d/res" />
+      <root url="jar://C:/Android_studio/caches/transforms-2/files-2.1/9ef41616dad319b2decbaa6e9c20dd2d/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.firebase/firebase-firestore/19.0.0/15ebcfb0c88b89763a9bfc0ecad4eac36c68d662/firebase-firestore-19.0.0-javadoc.jar!/" />
+      <root url="jar://C:/Android_studio/caches/modules-2/files-2.1/com.google.firebase/firebase-firestore/19.0.0/15ebcfb0c88b89763a9bfc0ecad4eac36c68d662/firebase-firestore-19.0.0-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES />
   </library>

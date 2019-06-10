@@ -90,7 +90,7 @@ public class uploading extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode !=Activity.RESULT_OK) {
+        if(resultCode !=Activity.RESULT_OK) {
             Toast.makeText(this, "취소되었습니다", Toast.LENGTH_SHORT).show();
 
             if(tempFile != null) {
@@ -105,11 +105,13 @@ public class uploading extends AppCompatActivity {
         }
         switch(requestCode) {
             case PICK_FROM_ALBUM: {
+                Log.d("은하", "album사진 선택");
                 Uri photoUri = data.getData();
                 cropImage(photoUri);
                 break;
             }
             case PICK_FROM_CAMERA: {
+                Log.d("은하", "카메라 사진 선택");
                 Uri photoUri = Uri.fromFile(tempFile);
                 cropImage(photoUri);
                 break;
@@ -163,9 +165,11 @@ public class uploading extends AppCompatActivity {
     private void goToAlbum() {
         isCamera = false;
         Intent intent = new Intent();
-        intent.setType("image/*");
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         intent.setAction(Intent.ACTION_GET_CONTENT);
+        Log.d("은하", "앨범 접근 성공");
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_FROM_ALBUM);
+        Log.d("은하", "어디?");
     }
 
     private void takePhoto() {

@@ -24,13 +24,13 @@ public class DogDB {
         this.weight = weight;
     }
 
-    public int getSSN() {
-        return SSN;
-    }
+    //public int getSSN() {
+    //    return SSN;
+    //}
 
-    public void setSSN(int SSN) {
-        this.SSN = SSN;
-    }
+    //public void setSSN(int SSN) {
+    //    this.SSN = SSN;
+    //}
 
     public String getName() {
         return name;

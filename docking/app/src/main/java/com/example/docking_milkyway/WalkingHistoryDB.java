@@ -20,13 +20,13 @@ public class WalkingHistoryDB {
         this.endtime = end;
     }
 
-    public String getDog_SSN() {
-        return Dog_SSN;
-    }
+    //public String getDog_SSN() {
+    //    return Dog_SSN;
+    //}
 
-    public void setDog_SSN(String dog_SSN) {
-        Dog_SSN = dog_SSN;
-    }
+    //public void setDog_SSN(String dog_SSN) {
+    //    Dog_SSN = dog_SSN;
+    //}
 
     public int getDistance() {
         return distance;

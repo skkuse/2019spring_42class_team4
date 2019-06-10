@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.docking_milkyway.util.ImageResizeUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +36,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +50,7 @@ import java.util.List;
 
 public class uploading extends AppCompatActivity {
 
-    private Button getalbum, uploadok, uplodacancel;
+    private Button getcamera, getalbum, uploadok, uplodacancel;
     private EditText textinsert, taginsert, locationinsert;
 
     private Uri photoUri;
@@ -67,30 +69,23 @@ public class uploading extends AppCompatActivity {
     private Boolean isCamera = false;
 
     private void tedPermission() {
-        PermissionListener permissinoListener = new PermissionListener() {
+        PermissionListener permissionListener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
             } //권한 요청 성공
 
             @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            public void onPermissionDenied(List<String> deniedPermissions) {
             } //권한 요청 실패
 
         };
 
         TedPermission.with(this)
-                .setPermissionListener(permissinoListener)
+                .setPermissionListener(permissionListener)
                 .setRationaleMessage(getResources().getString(R.string.permission_2))
                 .setDeniedMessage(getResources().getString(R.string.permission_1))
                 .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                 .check();
-    }
-
-    private void goToAlbum() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_FROM_ALBUM);
     }
 
     @Override
@@ -108,7 +103,22 @@ public class uploading extends AppCompatActivity {
             }
             return;
         }
-        if(requestCode == PICK_FROM_ALBUM) {
+        switch(requestCode) {
+            case PICK_FROM_ALBUM: {
+                Uri photoUri = data.getData();
+                cropImage(photoUri);
+                break;
+            }
+            case PICK_FROM_CAMERA: {
+                Uri photoUri = Uri.fromFile(tempFile);
+                cropImage(photoUri);
+                break;
+            }
+            case Crop.REQUEST_CROP: {
+                setImage();
+            }
+        }
+        /*if(requestCode == PICK_FROM_ALBUM) {
             Uri photoUri = data.getData();
             Cursor cursor = null;
             try{
@@ -135,19 +145,31 @@ public class uploading extends AppCompatActivity {
             setImage();
         }
 
-        setImage();
+        setImage();*/
     }
 
     private void setImage() {
         ImageView imageView = findViewById(R.id.albumimage);
 
+        ImageResizeUtils.resizeFile(tempFile, tempFile, 1280, isCamera);
+
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
+        Log.d("은하", "setImage : " + tempFile.getAbsolutePath());
 
         imageView.setImageBitmap(originalBm);
     }
 
+    private void goToAlbum() {
+        isCamera = false;
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_FROM_ALBUM);
+    }
+
     private void takePhoto() {
+        isCamera = true;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         try{
@@ -169,6 +191,21 @@ public class uploading extends AppCompatActivity {
                 startActivityForResult(intent, PICK_FROM_CAMERA);
             }
         }
+    }
+
+    private void cropImage(Uri photoUri) {
+        Log.d("은하", "tempFile : " + tempFile);
+        if(tempFile == null) {
+            try {
+                tempFile = createImageFile();
+            } catch (IOException e) {
+                Toast.makeText(this, "이미지 처리 오류! 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                finish();
+                e.printStackTrace();
+            }
+        }
+        Uri savingUri = Uri.fromFile(tempFile);
+        Crop.of(photoUri, savingUri).asSquare().start(this);
     }
 
     private File createImageFile() throws IOException {
@@ -199,6 +236,7 @@ public class uploading extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
+        getcamera = findViewById(R.id.getcamera);
         getalbum = findViewById(R.id.getalbum);
         uploadok = findViewById(R.id.uploadok);
         uplodacancel = findViewById(R.id.uploadcancel);
@@ -212,6 +250,14 @@ public class uploading extends AppCompatActivity {
             public void onClick(View v) {
                 //앨범 접근
                 goToAlbum();
+            }
+        });
+
+        getcamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //카메라 접근
+                takePhoto();
             }
         });
 

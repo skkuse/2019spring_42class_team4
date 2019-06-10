@@ -37,6 +37,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- crop activity -->
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".login"></activity>
         <activity android:name=".signin"></activity>
         <activity android:name=".Matching"></activity>

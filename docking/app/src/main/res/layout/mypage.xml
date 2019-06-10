@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:padding="10dp"
         android:layout_width="match_parent"
@@ -41,13 +42,12 @@
             android:layout_height="wrap_content"
             android:text="내정보" />
 
-        <Button
-            android:id="@+id/my_history"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mypage_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="내 히스토리" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
 
     </LinearLayout>
-
 
 </LinearLayout>

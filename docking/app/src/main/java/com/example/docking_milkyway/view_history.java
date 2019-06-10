@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 
 public class view_history extends AppCompatActivity {
-    String email = "yongtae0104@gmail.com";
+    String email;
     WalkingHistoryDB history;
     int history_len = 0;
 
@@ -99,7 +99,8 @@ public class view_history extends AppCompatActivity {
         setContentView(R.layout.view_history);
 
         SaveSharedPreference login_history = new SaveSharedPreference();
-        Log.d("웅아ㅏ아앙", login_history.getUserName(getApplicationContext()));
+        //Log.d("웅아ㅏ아앙", login_history.getUserName(getApplicationContext()));
+        email = login_history.getUserName(getApplicationContext());
 
         final FirebaseFirestore WalkingDB = FirebaseFirestore.getInstance();
 

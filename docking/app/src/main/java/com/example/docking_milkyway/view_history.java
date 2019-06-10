@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -13,22 +14,87 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+
+
 
 public class view_history extends AppCompatActivity {
     String email = "yongtae0104@gmail.com";
     WalkingHistoryDB history;
+    int history_len = 0;
+
+    public void draw_distance_graph(ArrayList<Entry> entries){
+        LineChart lineChart = findViewById(R.id.distance_chart);
+        Log.d("....",""+ entries);
+
+
+        Collections.sort(entries, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry o1, Entry o2) {
+                if(o1.getX() <= o2.getX()){
+                    return -1;
+                }else{
+                    return 1;
+                }
+            }
+        });
+
+
+
+
+        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+        LineData data = new LineData(dataset);
+
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS); //
+        dataset.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        dataset.setDrawFilled(true); //그래프 밑부분 색칠*/
+        lineChart.setData(data);
+        lineChart.animateY(2000);
+    }
+    public void draw_time_graph(ArrayList<Entry> entries){
+        LineChart lineChart = findViewById(R.id.elapsetime_chart);
+        Log.d("....",""+ entries);
+
+        Collections.sort(entries, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry o1, Entry o2) {
+                if(o1.getX() <= o2.getX()){
+                    return -1;
+                }else{
+                    return 1;
+                }
+            }
+        });
+
+        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+        LineData data = new LineData(dataset);
+
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS); //
+        dataset.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        dataset.setDrawFilled(true); //그래프 밑부분 색칠*/
+        lineChart.setData(data);
+        lineChart.animateY(2000);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_history);
 
         final FirebaseFirestore WalkingDB = FirebaseFirestore.getInstance();
+
         DocumentReference walkRef = WalkingDB.collection("Walking").document(email);
+
         walkRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -37,9 +103,46 @@ public class view_history extends AppCompatActivity {
                     if(document.exists()){
                         Log.d("view history", "산책기록 확인!");
                         history = document.toObject(WalkingHistoryDB.class);
+                        history_len = document.get("length", int.class);
+                        Log.d("view history", ""+ history_len);
                         Log.d("",history.endtime.toString());
+
+                        CollectionReference history_list_ref;
+                        history_list_ref = walkRef.collection("yong");
+
+                        ArrayList<Entry> distance_entries = new ArrayList<>();
+                        ArrayList<Entry> time_entires = new ArrayList<>();
+
+                        for(int i = 1; i <= history_len; i++) {
+                            int cnt = i;
+                            history_list_ref.document("h" + i)
+                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot walking_document = task.getResult();//.toObject(WalkingHistoryDB.class);
+                                        if(walking_document.exists()){
+                                            WalkingHistoryDB temp = walking_document.toObject(WalkingHistoryDB.class);
+                                            distance_entries.add(new Entry(cnt, temp.distance));
+                                            time_entires.add(new Entry(cnt, temp.elapsetime));
+                                            //Log.d("Read History", "Read 성공" + entries);
+
+                                            if(distance_entries.size() == history_len && time_entires.size() == history_len ){
+                                                draw_distance_graph(distance_entries);
+                                                draw_time_graph(time_entires);
+                                            }
+                                        }
+                                    }else{ Log.d("Read History", "기록 데이터 read 실패"); }
+                                }
+                            });
+
+                        }
+
+
                     }else{
                         Log.d("view history", "산책기록 없음!");
+                        Toast.makeText(view_history.this, "기록이 존재하지 않습니다.", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 }else{
                     Log.d("view history", "get() failed");
@@ -47,44 +150,5 @@ public class view_history extends AppCompatActivity {
 
             }
         });
-
-        LineChart lineChart = findViewById(R.id.chart);
-
-        ArrayList<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(4f, 0));
-        entries.add(new Entry(8f, 1));
-        entries.add(new Entry(6f, 2));
-        entries.add(new Entry(2f, 3));
-        entries.add(new Entry(18f, 4));
-        entries.add(new Entry(9f, 5));
-        entries.add(new Entry(16f, 6));
-        entries.add(new Entry(5f, 7));
-        entries.add(new Entry(3f, 8));
-        entries.add(new Entry(7f, 10));
-        entries.add(new Entry(9f, 11));
-
-        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
-
-        ArrayList<String> labels = new ArrayList<String>();
-        labels.add("January");
-        labels.add("February");
-        labels.add("March");
-        labels.add("April");
-        labels.add("May");
-        labels.add("June");
-        labels.add("July");
-        labels.add("August");
-        labels.add("September");
-        labels.add("October");
-        labels.add("November");
-        labels.add("December");
-
-        LineData data = new LineData(dataset);
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS); //
-        /*dataset.setDrawCubic(true); //선 둥글게 만들기
-        dataset.setDrawFilled(true); //그래프 밑부분 색칠*/
-
-        lineChart.setData(data);
-        lineChart.animateY(5000);
     }
 }

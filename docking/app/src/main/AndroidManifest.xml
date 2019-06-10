@@ -39,7 +39,7 @@
         </activity>
         <!-- crop activity -->
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".login"></activity>
         <activity android:name=".signin"></activity>

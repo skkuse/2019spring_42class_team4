@@ -1,7 +1,10 @@
 package com.example.docking_milkyway;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +27,7 @@ public class login extends AppCompatActivity {
     EditText pwinsert;
     String email;
     String pw;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +56,8 @@ public class login extends AppCompatActivity {
                         if(task.isSuccessful()){
                             DocumentSnapshot document = task.getResult();
                             if(document.exists()){
+                                SaveSharedPreference login_history = new SaveSharedPreference();
+                                login_history.setUserName(getApplicationContext(), email);
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
                                 Log.d("login", "계정 존재 확인");

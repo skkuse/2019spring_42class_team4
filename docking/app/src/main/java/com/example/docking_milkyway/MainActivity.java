@@ -77,9 +77,8 @@ public class MainActivity extends AppCompatActivity
         bt3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("은하","버튼 3 눌림");
-                setFrag(2);
-                Log.d("은하","fragment 3으로 전환했음");
+                Intent intent = new Intent(getApplicationContext(), view_history.class);
+                startActivity(intent);
             }
         });
         Log.d("상아","리스너 추가 완료");

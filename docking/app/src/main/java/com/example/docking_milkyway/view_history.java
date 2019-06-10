@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -49,7 +50,13 @@ public class view_history extends AppCompatActivity {
             }
         });
 
-
+        int sum = 0;
+        for(int i = 0; i < entries.size(); i++){
+            sum += entries.get(i).getY();
+        }
+        TextView dist_text = findViewById(R.id.distance_text);
+        dist_text.setText("최근 " + entries.size() + "번의 산책동안 총 " + sum+ "m\n"
+                + "평균 " + sum/entries.size() +  "m 만큼 산책했습니다.");
 
 
         LineDataSet dataset = new LineDataSet(entries, "# of Calls");
@@ -90,6 +97,9 @@ public class view_history extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_history);
+
+        SaveSharedPreference login_history = new SaveSharedPreference();
+        Log.d("웅아ㅏ아앙", login_history.getUserName(getApplicationContext()));
 
         final FirebaseFirestore WalkingDB = FirebaseFirestore.getInstance();
 
@@ -137,8 +147,6 @@ public class view_history extends AppCompatActivity {
                             });
 
                         }
-
-
                     }else{
                         Log.d("view history", "산책기록 없음!");
                         Toast.makeText(view_history.this, "기록이 존재하지 않습니다.", Toast.LENGTH_LONG).show();

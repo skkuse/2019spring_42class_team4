@@ -19,6 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity
         walking = new Walking();
         setFrag(0);
 
-
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +83,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
         Log.d("상아","리스너 추가 완료");
+
+        // create Navigation Header
+        // 여기서 유저 프로필 이미지 , 유저이름, 유저정보 수정해주시면 될 것 같습니다!
+        View hView =  navigationView.inflateHeaderView(R.layout.nav_header);
+        ImageView userIMG = (ImageView)hView.findViewById(R.id.userImg);
+        TextView userN = (TextView)hView.findViewById(R.id.userNickname);
+        userN.setText("newUserNIckname!");
 
         //firebase 연동 확인
         //FirebaseDatabase database = FirebaseDatabase.getInstance();

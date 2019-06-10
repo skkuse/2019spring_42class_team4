@@ -21,6 +21,7 @@ public class ImageResizeUtils {
      * @param newWidth
      * @param isCamera
      */
+
     public static void resizeFile(File file, File newFile, int newWidth, Boolean isCamera) {
 
         String TAG = "은하";

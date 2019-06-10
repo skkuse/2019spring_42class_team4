@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.core.FirestoreClient;
 import com.google.firestore.v1.WriteResult;
@@ -465,9 +466,16 @@ public class nowWalking extends Fragment {
         int n = recorder.endtime.getMinute();
         String userID = "shapizz@naver.com";      // 문서 이름 유저아이디로 수정하기
         db.collection("Walking").document(userID).set(tmp_Walk);
+        /*
+        DocumentReference docref = db.collection("Walking").document(userID);
+        int wNum = 1;
         // wNum <- db.colletion("Walking").document(userID).get(length)
         // wNum++1 -> 다시 set 하고
-        // db.collection("Walking").document(userID).collection(userID), document("h"+wNum) 하도록 수정하겠습니다
+        wNum +=1;
+        db.collection(("Walking").document(userID).)
+        db.collection("Walking").document(userID).collection(userID).document("h"+wNum).set(tmp_Walk);
+        //하도록 수정하겠습니다*/
+
 
 
 

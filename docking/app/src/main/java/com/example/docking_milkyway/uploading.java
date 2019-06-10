@@ -69,19 +69,19 @@ public class uploading extends AppCompatActivity {
     private Boolean isCamera = false;
 
     private void tedPermission() {
-        PermissionListener permissinoListener = new PermissionListener() {
+        PermissionListener permissionListener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
             } //권한 요청 성공
 
             @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            public void onPermissionDenied(List<String> deniedPermissions) {
             } //권한 요청 실패
 
         };
 
         TedPermission.with(this)
-                .setPermissionListener(permissinoListener)
+                .setPermissionListener(permissionListener)
                 .setRationaleMessage(getResources().getString(R.string.permission_2))
                 .setDeniedMessage(getResources().getString(R.string.permission_1))
                 .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)

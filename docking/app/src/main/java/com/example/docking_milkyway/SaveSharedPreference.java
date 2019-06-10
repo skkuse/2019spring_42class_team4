@@ -4,6 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+/*
+
+*   사용하실때 SaveSharedPreference 객체 생성하고, ex) SaveSharedPreference history = new Save...
+*   history.getUserName 이 "NULL" 이 아닐 경우 로그인이 되어있는 상태입니다..
+*   getUserName 받아서 계정이름으로 쓰시면 됩니다.
+*
+* */
+
+
 public class SaveSharedPreference {
 
     static final String PREF_USER_NAME= "NULL";

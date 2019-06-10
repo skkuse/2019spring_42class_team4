@@ -42,5 +42,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'gun0912.ted:tedpermission:2.1.0'
+    implementation 'com.soundcloud.android:android-crop:1.0.1@aar'
 }
 apply plugin: 'com.google.gms.google-services'

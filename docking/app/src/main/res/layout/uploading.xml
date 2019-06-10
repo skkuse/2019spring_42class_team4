@@ -37,28 +37,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="20dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="사진을 직접 찍거나 앨범에서 가져오세요" />
                 <LinearLayout
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <Button
-                        android:text="camera"
-                        android:id="@+id/takeapicture"
-                        android:layout_width="100sp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="30dp"/>
+                    <ImageView
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:id="@+id/albumimage"
+                        android:visibility="gone"
+                        />
                     <Button
                         android:text="album"
                         android:id="@+id/getalbum"
                         android:layout_width="100sp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"/>
+                        android:visibility="visible"/>
                 </LinearLayout>
             </LinearLayout>
 

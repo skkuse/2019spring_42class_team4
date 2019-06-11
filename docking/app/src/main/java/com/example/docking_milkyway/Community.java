@@ -54,6 +54,7 @@ public class Community extends Fragment {
         uploading = view.findViewById(R.id.upload);
         search = view.findViewById(R.id.search);
         isnotlogin = view.findViewById(R.id.isnotlogin);
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
 
         uploading.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,12 +73,24 @@ public class Community extends Fragment {
             }
         });
 
-        //SaveSharedPreference login_history = new SaveSharedPreference();
-        //String userid = login_history.getUserName(view.getContext());
+        SaveSharedPreference login_history = new SaveSharedPreference();
+        Log.d("은하", login_history.toString());
+        String userid = login_history.getUserName(view.getContext());
+        Log.d("은하", "userid : "+userid);
+        if(userid.isEmpty()){
+            Log.d("은하", "userid가 비어있음");
+        }
 
-        String userid="1002galaxy@gmail.com";
-        if(userid != "NULL") {
-
+        //String userid="1002galaxy@gmail.com";
+        if(userid.isEmpty()||userid == "NULL") {
+            mRecyclerView.setVisibility(View.GONE);
+            isnotlogin.setVisibility(View.VISIBLE);
+            uploading.setVisibility(View.INVISIBLE);
+        }
+        else{
+            mRecyclerView.setVisibility(View.VISIBLE);
+            isnotlogin.setVisibility(View.GONE);
+            uploading.setVisibility(View.VISIBLE);
             contentsDB.collection("Contents").document(userid).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     //success
@@ -129,10 +142,6 @@ public class Community extends Fragment {
 
             });
 
-        }
-        else{
-            isnotlogin.setVisibility(View.VISIBLE);
-            uploading.setVisibility(View.INVISIBLE);
         }
 
         return view;

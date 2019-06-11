@@ -1,6 +1,7 @@
 package com.example.docking_milkyway;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ArrayList<ContentDB> mData = null;
+    private ArrayList<ArrayList<CommentDB>> commentDBS = null;
+    private Context mcontext;
 
     //아이템 뷰를 저장하는 뷰홀더 클래스
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -23,6 +26,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         TextView contentssubstance;
         TextView contentstext;
         Button contentslike;
+        RecyclerView commentsrecyclerview;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -33,12 +37,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             contentstext = itemView.findViewById(R.id.contentstext);
             contentssubstance = itemView.findViewById(R.id.ccontentssubstance);
             contentslike = itemView.findViewById(R.id.contentlikebtn);
+            commentsrecyclerview = itemView.findViewById(R.id.commentsrecyclerview);
         }
     }
 
     //생성자에서 데이터 리스트 객체를 전달받음.
-    MyAdapter(ArrayList<ContentDB> list){
+    MyAdapter(Context context, ArrayList<ContentDB> list, ArrayList<ArrayList<CommentDB>> commentlist){
         mData = list;
+        commentDBS = commentlist;
         Log.d("은하", String.valueOf(mData.size()));
     }
 
@@ -46,6 +52,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+        this.mcontext = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.recyclerview_item, parent, false);
@@ -65,6 +72,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.likes.setText(thislike);
         Log.d("은하", contentdb.getuserSSN()+", "+contentdb.gettext()+", "+contentdb.getlike());
         Button contentslike = holder.contentslike;
+
+        //comments를 위한 recyclerview
+        holder.commentsrecyclerview.setLayoutManager(new LinearLayoutManager(mcontext));
+        //specify an adapter (see also next example)
+        if(commentDBS.get(contentdb.SSN) != null) {
+            CommentsAdapter adapter = new CommentsAdapter(commentDBS.get(contentdb.SSN));
+            Log.d("은하", "여기까지왔나?");
+            holder.commentsrecyclerview.setAdapter(adapter);
+        }
 
         contentslike.setOnClickListener(new View.OnClickListener() {
             @Override

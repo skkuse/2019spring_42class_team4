@@ -1,43 +1,47 @@
 package com.example.docking_milkyway;
 
+import java.util.Date;
+
 public class CommentDB {
     int C_Num;
     String substance;
-    int date;
+    Date date;
     int like;
     int parent_Content;
-    int User_SSN;
+    String User_SSN;
     Integer super_C_Num;
 
     public CommentDB() { }
 
-    public CommentDB(int c_Num, String substance, int date, int parent_Content, int user_SSN) {
+    //일반 댓글
+    public CommentDB(int c_Num, String substance, Date date, int parent_Content, String user_SSN) {
         C_Num = c_Num;
         this.substance = substance;
         this.date = date;
         this.like = 0;
         this.parent_Content = parent_Content;
-        User_SSN = user_SSN;
+        this.User_SSN = user_SSN;
         this.super_C_Num = null;
     }
 
-    public CommentDB(int c_Num, String substance, int date, int parent_Content, int user_SSN, int super_C_Num) {
+    //대댓글
+    public CommentDB(int c_Num, String substance, Date date, int parent_Content, String user_SSN, int super_C_Num) {
         C_Num = c_Num;
         this.substance = substance;
         this.date = date;
         this.like = 0;
         this.parent_Content = parent_Content;
-        User_SSN = user_SSN;
+        this.User_SSN = user_SSN;
         this.super_C_Num = super_C_Num;
     }
 
-    public int getC_Num() {
-        return C_Num;
-    }
+    //public int getC_Num() {
+    //    return C_Num;
+    //}
 
-    public void setC_Num(int c_Num) {
-        C_Num = c_Num;
-    }
+    //public void setC_Num(int c_Num) {
+    //    C_Num = c_Num;
+    //}
 
     public String getSubstance() {
         return substance;
@@ -47,11 +51,11 @@ public class CommentDB {
         this.substance = substance;
     }
 
-    public int getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -71,19 +75,19 @@ public class CommentDB {
         this.parent_Content = parent_Content;
     }
 
-    public int getUser_SSN() {
-        return User_SSN;
-    }
+    //public int getUser_SSN() {
+    //    return User_SSN;
+    //}
 
-    public void setUser_SSN(int user_SSN) {
-        User_SSN = user_SSN;
-    }
+    //public void setUser_SSN(int user_SSN) {
+    //    User_SSN = user_SSN;
+    //}
 
-    public Integer getSuper_C_Num() {
-        return super_C_Num;
-    }
+    //public Integer getSuper_C_Num() {
+    //    return super_C_Num;
+    //}
 
-    public void setSuper_C_Num(Integer super_C_Num) {
-        this.super_C_Num = super_C_Num;
-    }
+    //public void setSuper_C_Num(Integer super_C_Num) {
+    //    this.super_C_Num = super_C_Num;
+    //}
 }

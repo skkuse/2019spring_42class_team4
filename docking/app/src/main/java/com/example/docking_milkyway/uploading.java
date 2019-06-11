@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.example.docking_milkyway.util.ImageResizeUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -120,34 +122,6 @@ public class uploading extends AppCompatActivity {
                 setImage();
             }
         }
-        /*if(requestCode == PICK_FROM_ALBUM) {
-            Uri photoUri = data.getData();
-            Cursor cursor = null;
-            try{
-                // Uri 스키마를
-                // content:/// 에서 file:///로 변경한다.
-                String[] proj ={ MediaStore.Images.Media.DATA };
-
-                assert photoUri != null;
-                cursor = getContentResolver().query(photoUri, proj, null, null, null);
-
-                assert cursor != null;
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
-                cursor.moveToFirst();
-
-                tempFile = new File(cursor.getString(column_index));
-
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
-            }
-        } else if (requestCode == PICK_FROM_CAMERA) {
-            setImage();
-        }
-
-        setImage();*/
     }
 
     private void setImage() {
@@ -268,7 +242,8 @@ public class uploading extends AppCompatActivity {
             public void onClick(View v) {
 
                 SaveSharedPreference login_history = new SaveSharedPreference();
-                String userid = (String) login_history.getUserName(v.getContext());
+                //String userid = (String) login_history.getUserName(v.getContext());
+                String userid = "1002galaxy@gmail.com"; //테스트용
 
                 Log.d("은하", "uploadbtn click");
                 Log.d("은하", "현재 "+userid+" 업로딩중");
@@ -297,8 +272,20 @@ public class uploading extends AppCompatActivity {
                                     int SSN = (int) newcontentssize;
                                     temp_content.SSN = SSN;
                                     temp_content.setText(text);
-                                    firebaseFirestore.collection("Contents").document(userid)
-                                            .collection(userid).document(String.valueOf(SSN)).set(temp_content);
+                                    firebaseFirestore.collection("Contents")
+                                            .add(temp_content)
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    Log.d("은하", "DocumentSnapshot written with ID: " + documentReference.getId());
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("은하", "Error adding document", e);
+                                                }
+                                            });
                                     //contentssize update to firebase
                                     newcontentssize++;
                                     firebaseFirestore.collection("Contents")

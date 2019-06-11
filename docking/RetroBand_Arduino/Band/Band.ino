@@ -37,7 +37,7 @@
 // 
 
 #include <Wire.h>
-
+#include <SoftwareSerial.h>
 
 // The name of the sensor is "MPU-6050".
 // For program code, I omit the '-', 
@@ -666,13 +666,23 @@ typedef union accel_t_gyro_union
  int16_t z_gyro;
  } value;
 };
-
+int G_tx=11;
+int G_rx=10;
+SoftwareSerial gpsSerial(G_tx,G_rx);
+//  gps - arduino
+//  tx - 10 
+//  rx - 11
+//  vcc - 5v
+//  gnd - gnd
+char c = ""; // Wn 인지 구분 및 str에 저장.
+String str = ""; // \n 전까지 c 값을 저장.
+String targetStr = "GPGGA"; // str의 값이 NMEA의 GPGGA 값인지 타겟
 
 void setup()
 { 
  int error;
  uint8_t c;
-
+  // put your setup code here, to run once:
 
  Serial.begin(9600);
  Serial.println(F("InvenSense MPU-6050"));
@@ -704,6 +714,8 @@ void setup()
  Serial.print(c,HEX);
  Serial.print(F(", error = "));
  Serial.println(error,DEC);
+ Serial.println("Start GPS... ");
+ gpsSerial.begin(9600);
 
 
  // Clear the 'sleep' bit to start the sensor.
@@ -713,6 +725,46 @@ void setup()
 
 void loop()
 {
+    if(gpsSerial.available()) // gps 센서 통신 가능?
+    {
+       
+      c=gpsSerial.read(); // 센서의 값 읽기
+      if(c == '\n'){ // \n 값인지 구분.
+       
+        // \n 일시. 지금까지 저장된 str 값이 targetStr과 맞는지 구분
+        if(targetStr.equals(str.substring(1, 6))){
+          // NMEA 의 GPGGA 값일시
+          Serial.println(str);
+          // , 를 토큰으로서 파싱.
+          int first = str.indexOf(",");
+          int two = str.indexOf(",", first+1);
+          int three = str.indexOf(",", two+1);
+          int four = str.indexOf(",", three+1);
+          int five = str.indexOf(",", four+1);
+          // Lat과 Long 위치에 있는 값들을 index로 추출
+          String Lat = str.substring(two+1, three);
+          String Long = str.substring(four+1, five);
+          // Lat의 앞값과 뒷값을 구분
+          String Lat1 = Lat.substring(0, 2);
+          String Lat2 = Lat.substring(2);
+          // Long의 앞값과 뒷값을 구분
+          String Long1 = Long.substring(0, 3);
+          String Long2 = Long.substring(3);
+          //좌표 계산.
+          double LatF = Lat1.toDouble() + Lat2.toDouble()/60;
+          float LongF = Long1.toFloat() + Long2.toFloat()/60;
+          // 좌표 출력.
+          Serial.print("Lat : ");
+          Serial.println(LatF, 15);
+          Serial.print("Long : ");
+          Serial.println(LongF, 15);
+        }
+        // str 값 초기화 
+        str = "";
+      }else{ // \n 아닐시, str에 문자를 계속 더하기
+        str += c;
+      }
+    }
  int error;
  double dT;
  accel_t_gyro_union accel_t_gyro;
@@ -782,6 +834,7 @@ void loop()
  Serial.print(accel_t_gyro.value.z_gyro, DEC);
  Serial.print(F(", "));
  Serial.println(F(""));
+  // put your main code here, to run repeatedly:
 
  delay(1000);
 }

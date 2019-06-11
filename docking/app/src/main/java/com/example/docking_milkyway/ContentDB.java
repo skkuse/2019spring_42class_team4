@@ -11,43 +11,30 @@ public class ContentDB {
     Date date;
     boolean tag;
     int like;
+    int comment;
     String userSSN;
     ContentDB() {}
 
-    ContentDB(int SSN, String substance, String text, Date date, boolean tag, int like, String userSSN) {
+    ContentDB(int SSN, String substance, String text, Date date, boolean tag, int like, int comment, String userSSN) {
         this.SSN = SSN;
         this.substance = substance;
         this.text = text;
         this.date = date;
         this.tag = tag;
         this.like = like;
+        this.comment = comment;
         this.userSSN = userSSN;
     }
 
     //테스트용
-    ContentDB(String text, boolean tag, String userSSN){
+    ContentDB(String substance, String text, boolean tag, String userSSN){
         this.SSN = 0;
-        this.substance = "substance";
+        this.substance = substance;
         this.text = text;
         this.tag = tag;
         this.like = 0;
+        this.comment = 0;
         this.userSSN = userSSN;
-    }
-
-    ContentDB(int SSN, String substance, String text, Date date, String userSSN) {
-        this.SSN = SSN;
-        this.substance = substance;
-        this.text = text;
-        this.date = date;
-        this.tag = false;
-        this.like = 0;
-        this.userSSN = userSSN;
-    }
-
-    //test용
-    ContentDB(int SSN, String text){
-        this.SSN = SSN;
-        this.text = text;
     }
 
     //public int getSSN() {return SSN;}

@@ -235,8 +235,6 @@ public class uploading extends AppCompatActivity {
 
         tedPermission();
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        //user_id = FirebaseAuth.getCurrentUser().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
@@ -268,8 +266,12 @@ public class uploading extends AppCompatActivity {
         uploadok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userid = "1002galaxy@gmail.com"; //테스트 위함, 임시
+
+                SaveSharedPreference login_history = new SaveSharedPreference();
+                String userid = (String) login_history.getUserName(v.getContext());
+
                 Log.d("은하", "uploadbtn click");
+                Log.d("은하", "현재 "+userid+" 업로딩중");
                 String text = textinsert.getText().toString();
                 Boolean tag=false;
                 if(taginsert.getText().toString().length() > 0){
@@ -281,7 +283,7 @@ public class uploading extends AppCompatActivity {
                 }
                 else {
 
-                    ContentDB temp_content = new ContentDB(text, tag, userid);
+                    ContentDB temp_content = new ContentDB("image", text, tag, userid);
 
                     DocumentReference contentsRef = firebaseFirestore.collection("Contents").document(userid);
                     contentsRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

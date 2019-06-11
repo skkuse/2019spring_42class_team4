@@ -7,24 +7,25 @@ public class CommentDB {
     int like;
     int parent_Content;
     int User_SSN;
-    int super_C_Num;
+    Integer super_C_Num;
 
     public CommentDB() { }
 
-    public CommentDB(int c_Num, String substance, int date, int like, int parent_Content, int user_SSN) {
+    public CommentDB(int c_Num, String substance, int date, int parent_Content, int user_SSN) {
         C_Num = c_Num;
         this.substance = substance;
         this.date = date;
-        this.like = like;
+        this.like = 0;
         this.parent_Content = parent_Content;
         User_SSN = user_SSN;
+        this.super_C_Num = null;
     }
 
-    public CommentDB(int c_Num, String substance, int date, int like, int parent_Content, int user_SSN, int super_C_Num) {
+    public CommentDB(int c_Num, String substance, int date, int parent_Content, int user_SSN, int super_C_Num) {
         C_Num = c_Num;
         this.substance = substance;
         this.date = date;
-        this.like = like;
+        this.like = 0;
         this.parent_Content = parent_Content;
         User_SSN = user_SSN;
         this.super_C_Num = super_C_Num;
@@ -78,11 +79,11 @@ public class CommentDB {
         User_SSN = user_SSN;
     }
 
-    public int getSuper_C_Num() {
+    public Integer getSuper_C_Num() {
         return super_C_Num;
     }
 
-    public void setSuper_C_Num(int super_C_Num) {
+    public void setSuper_C_Num(Integer super_C_Num) {
         this.super_C_Num = super_C_Num;
     }
 }

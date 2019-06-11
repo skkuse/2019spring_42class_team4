@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/commentuser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:text="유저닉네임"
+        android:background="#00ff0000"
+        android:layout_alignParentLeft="true"/>
+    <TextView
+        android:layout_alignBaseline="@id/commentuser"
+        android:layout_marginRight="10dp"
+        android:layout_toEndOf="@id/commentuser"
+        android:id="@+id/commentstext"
+        android:text="commentstext"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:textAllCaps="false"
+        android:background="#00ff0000"
+        android:id="@+id/commentlikebutton"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:textSize="5pt"
+        android:text = "좋아요"
+        android:layout_alignBaseline="@id/commentuser"
+        android:layout_toEndOf="@id/commentstext"/>
+    <TextView
+        android:id="@+id/commentlike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="5pt"
+        android:text="0개"
+        android:layout_alignBaseline="@id/commentuser"
+        android:layout_toEndOf="@id/commentlikebutton"/>
+    <Button
+        style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/co_comment"
+        android:background="#00ff0000"
+        android:layout_marginLeft="10dp"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/commentlike"
+        android:textSize="5pt"
+        android:text = "답글 달기"
+        android:visibility="visible"/>
+</RelativeLayout>

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +35,7 @@ import java.util.List;
 public class Community extends Fragment {
     private View view;
     private Button uploading, search;
+    private TextView isnotlogin;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class Community extends Fragment {
         Context context = view.getContext();
         uploading = view.findViewById(R.id.upload);
         search = view.findViewById(R.id.search);
+        isnotlogin = view.findViewById(R.id.isnotlogin);
 
         uploading.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,12 +72,11 @@ public class Community extends Fragment {
             }
         });
 
-        //test를 위해 userid를 미리 선언
-        //원래대로라면 사용자 캐시 혹은 로그인 데이터로부터 가져와야 한다
-        String userid = "1002galaxy@gmail.com";
+        //SaveSharedPreference login_history = new SaveSharedPreference();
+        //String userid = login_history.getUserName(view.getContext());
 
-        //if 가져올 contents가 없다면 화면에 팔로우한 사용자가 없습니다 띄워주고 follow 추천
-        if(userid != null) {
+        String userid="1002galaxy@gmail.com";
+        if(userid != "NULL") {
 
             contentsDB.collection("Contents").document(userid).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -116,43 +118,6 @@ public class Community extends Fragment {
                             });
 
                         }
-
-
-                        /*
-                        List list = (List) document.getData().get("list");
-
-                        Log.d("은하", list.size() + "");
-                        for (int i=0;i < list.size(); i++) {
-                            Log.d("은하", "data["+i+"] > " +list.get(i).toString());
-                            HashMap map = (HashMap) list.get(i);
-                            ContentDB data = new ContentDB();
-                            data.setSSN(Integer.parseInt(map.get("SSN").toString()));
-                            data.setLike(Integer.parseInt(map.get("like").toString()));
-                            data.setSubstance(map.get("substance").toString());
-                            data.setText(map.get("text").toString());
-                            data.setUserSSN(map.get("userSSN").toString());
-                            Log.d("은하", map.get("SSN").toString());
-                            //data.settag <-- boolean 처리 어떻게?
-                            //data.setdate <-- 처리 위한 코드 있음
-                            Log.d("은하","contents 처리 작업 ok");
-
-                            //이 뒤에 리사이클러뷰 조정
-                            recyclerlist.add(i, data);
-                            Log.d("은하", i+"");
-                        }
-
-
-                        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-                        //mRecyclerView.setHasFixedSize(true);
-
-                        //use a linear layout manager
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-                        //specify an adapter (see also next example)
-                        MyAdapter adapter = new MyAdapter(recyclerlist);
-                        Log.d("은하", "여기까지왔나?" + recyclerlist.size());
-                        mRecyclerView.setAdapter(adapter);
-                        */
                     }
                     else{
                         Log.d("은하", "사용자 아이디에 해당하는 게시물 없음");
@@ -165,7 +130,10 @@ public class Community extends Fragment {
             });
 
         }
-        //else{} 추가해야
+        else{
+            isnotlogin.setVisibility(View.VISIBLE);
+            uploading.setVisibility(View.INVISIBLE);
+        }
 
         return view;
 

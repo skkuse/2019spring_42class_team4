@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -17,8 +20,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView writer;
         TextView likes;
-        TextView substance;
+        TextView contentssubstance;
         TextView contentstext;
+        Button contentslike;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -27,6 +31,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             writer = itemView.findViewById(R.id.writer);
             likes = itemView.findViewById(R.id.likes);
             contentstext = itemView.findViewById(R.id.contentstext);
+            contentssubstance = itemView.findViewById(R.id.ccontentssubstance);
+            contentslike = itemView.findViewById(R.id.contentlikebtn);
         }
     }
 
@@ -54,9 +60,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         ContentDB contentdb = mData.get(position);
         holder.writer.setText(contentdb.getuserSSN());
         holder.contentstext.setText(contentdb.gettext());
-        String thislike = Integer.toString(contentdb.getlike());
+        int like = contentdb.getlike();
+        String thislike = Integer.toString(like);
         holder.likes.setText(thislike);
         Log.d("은하", contentdb.getuserSSN()+", "+contentdb.gettext()+", "+contentdb.getlike());
+        Button contentslike = holder.contentslike;
+
+        contentslike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하", "like 버튼이 클릭된 아이템의 위치 : "+ position);
+                final int newlike = like+1;
+                holder.likes.setText(Integer.toString(newlike));
+                //파이어베이스에 업데이트
+                contentdb.setLike(newlike);
+                FirebaseFirestore.getInstance().collection("Contents").document(contentdb.getuserSSN())
+                        .collection(contentdb.getuserSSN()).document(String.valueOf(contentdb.SSN)).update("like", newlike);
+            }
+        });
     }
 
     //getItemCount() - 전체 데이터 갯수 리턴.

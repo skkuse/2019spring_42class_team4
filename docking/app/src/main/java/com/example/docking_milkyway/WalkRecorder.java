@@ -14,12 +14,13 @@ public class WalkRecorder {
     long elaspetime;                                //--> int elapsetime;
 
     double distance;                                   //--> int distance;
-                                                    //--> int dogssn > get from useracount
+    //--> int dogssn > get from useracount
 
     ArrayList<double[]> walkLog = new ArrayList<double[]>();    //--> double[] walklog
 
     double[] prevGPS = new double[2];
     double[] thisGPS = new double[2];
+
 
 
 

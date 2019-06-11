@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
 
-SoftwareSerial gpsSerial(10,11);
+SoftwareSerial gpsSerial(11,10);
 //  gps - arduino
 //  tx - 10 
 //  rx - 11
@@ -39,7 +39,7 @@ void loop() {
           String Lat1 = Lat.substring(0, 2);
           String Lat2 = Lat.substring(2);
           // Long의 앞값과 뒷값을 구분
-          String Long1 = Long.substring(0, 3)
+          String Long1 = Long.substring(0, 3);
           String Long2 = Long.substring(3);
           //좌표 계산.
           double LatF = Lat1.toDouble() + Lat2.toDouble()/60;
@@ -56,4 +56,5 @@ void loop() {
         str += c;
       }
     }
+     Serial.println(F("test"));
 }

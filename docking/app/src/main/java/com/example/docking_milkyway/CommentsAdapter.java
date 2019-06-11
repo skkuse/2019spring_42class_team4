@@ -16,8 +16,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
 
     //아이템 뷰를 저장하는 뷰홀더 클래스
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView userid, likes, commentstext;
-        Button commentlike, co_comment;
+        TextView likes, commentstext;
+        Button userid, commentlike, co_comment;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -45,7 +45,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         Context context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View view = inflater.inflate(R.layout.recyclerview_item, parent, false);
+        View view = inflater.inflate(R.layout.commentsrecyclerview_item, parent, false);
         CommentsAdapter.ViewHolder vh = new CommentsAdapter.ViewHolder(view);
 
         return vh;
@@ -55,11 +55,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     @Override
     public void onBindViewHolder(CommentsAdapter.ViewHolder holder, int position) {
         CommentDB commentdb = mData.get(position);
-        holder.userid.setText(commentdb.getUser_SSN());
+        Log.d("은하", commentdb.User_SSN+", "+commentdb.getSubstance()+", "+commentdb.getLike());
+        String user_id = commentdb.User_SSN;
+        Log.d("은하", "comment의 user_id? "+user_id);
+        holder.userid.setText(user_id);
         holder.commentstext.setText(commentdb.getSubstance());
         String thislike = Integer.toString(commentdb.getLike());
         holder.likes.setText("like " +thislike);
-        Log.d("은하", commentdb.getUser_SSN()+", "+commentdb.getSubstance()+", "+commentdb.getLike());
     }
 
     //getItemCount() - 전체 데이터 갯수 리턴.

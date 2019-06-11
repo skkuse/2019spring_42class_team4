@@ -36,6 +36,7 @@ public class Community extends Fragment {
     private View view;
     private Button uploading, search;
     private TextView isnotlogin;
+    private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,13 +76,13 @@ public class Community extends Fragment {
 
         SaveSharedPreference login_history = new SaveSharedPreference();
         Log.d("은하", login_history.toString());
-        String userid = login_history.getUserName(view.getContext());
+        //String userid = login_history.getUserName(view.getContext());
+        String userid="1002galaxy@gmail.com"; //테스트용
         Log.d("은하", "userid : "+userid);
         if(userid.isEmpty()){
             Log.d("은하", "userid가 비어있음");
         }
 
-        //String userid="1002galaxy@gmail.com";
         if(userid.isEmpty()||userid == "NULL") {
             mRecyclerView.setVisibility(View.GONE);
             isnotlogin.setVisibility(View.VISIBLE);
@@ -118,18 +119,46 @@ public class Community extends Fragment {
                                             ContentDB data = (ContentDB) contentdocument.toObject(ContentDB.class);
                                             Log.d("은하", "data: "+data.toString());
                                             recyclerlist.add(data);
-                                            Log.d("은하", "여기 recyclerlist: "+recyclerlist);
-                                            if(finalI ==contentssize-1){
-                                                Log.d("은하", "여기?");
-                                                setrecyclerview(recyclerlist, context);
-                                            }
+
+                                            Log.d("은하", "contentSSN : "+finalI + ", userid : "+userid);
+                                            ArrayList<CommentDB> commentslist = new ArrayList<>();
+                                            contentsDB.collection("Comments")
+                                                    .whereEqualTo("User_SSN", userid)
+                                                    .whereEqualTo("C_Num", finalI)
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Log.d("은하", "여기까지?commenttasksuccess");
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                    Log.d("은하", document.getId() + " => " + document.getData());
+                                                                    CommentDB tempcommentdb = document.toObject(CommentDB.class);
+                                                                    commentslist.add(tempcommentdb);
+                                                                    Log.d("은하", "commentslist에 잘 추가되었나? "+commentslist);
+                                                                }
+                                                                Log.d("은하", "finalI : "+ finalI +", commentslist : "+commentslist);
+                                                                if(commentslist != null) {
+                                                                    commentDBS.add(finalI, commentslist);
+                                                                }
+                                                                Log.d("은하", "commentDBS : "+commentDBS.toString());
+                                                            } else {
+                                                                Log.d("은하", "Error getting documents: ", task.getException());
+                                                            }
+                                                            //getcommentsfirestore(finalI, userid);
+                                                            Log.d("은하", "여기 recyclerlist: "+recyclerlist);
+                                                            if(finalI == contentssize-1){
+                                                                Log.d("은하", "여기?");
+                                                                setrecyclerview(recyclerlist, context);
+                                                            }
+                                                        }
+                                                    });
                                         }
                                     }else{
                                         Log.d("은하", "get() failed");
                                     }
                                 }
                             });
-
                         }
                     }
                     else{
@@ -156,7 +185,7 @@ public class Community extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         //specify an adapter (see also next example)
-        MyAdapter adapter = new MyAdapter(recyclerlist);
+        MyAdapter adapter = new MyAdapter(context, recyclerlist, commentDBS);
         Log.d("은하", "여기까지왔나?");
         mRecyclerView.setAdapter(adapter);
 

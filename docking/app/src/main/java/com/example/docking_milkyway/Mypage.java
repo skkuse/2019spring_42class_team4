@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.List;
 public class Mypage extends AppCompatActivity {
 
     Button My_info;
+    private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,11 +75,39 @@ public class Mypage extends AppCompatActivity {
                                             ContentDB data = (ContentDB) contentdocument.toObject(ContentDB.class);
                                             Log.d("은하", "data: "+data.toString());
                                             recyclerlist.add(data);
-                                            Log.d("은하", "여기 recyclerlist: "+recyclerlist);
-                                            if(finalI ==contentssize-1){
-                                                Log.d("은하", "여기?");
-                                                setrecyclerview(recyclerlist, context);
-                                            }
+                                            Log.d("은하", "contentSSN : "+finalI + ", userid : "+userid);
+                                            ArrayList<CommentDB> commentslist = new ArrayList<>();
+                                            contentsDB.collection("Comments")
+                                                    .whereEqualTo("User_SSN", userid)
+                                                    .whereEqualTo("C_Num", finalI)
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Log.d("은하", "여기까지?commenttasksuccess");
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                    Log.d("은하", document.getId() + " => " + document.getData());
+                                                                    CommentDB tempcommentdb = document.toObject(CommentDB.class);
+                                                                    commentslist.add(tempcommentdb);
+                                                                    Log.d("은하", "commentslist에 잘 추가되었나? "+commentslist);
+                                                                }
+                                                                Log.d("은하", "finalI : "+ finalI +", commentslist : "+commentslist);
+                                                                if(commentslist != null) {
+                                                                    commentDBS.add(finalI, commentslist);
+                                                                }
+                                                                Log.d("은하", "commentDBS : "+commentDBS.toString());
+                                                            } else {
+                                                                Log.d("은하", "Error getting documents: ", task.getException());
+                                                            }
+                                                            //getcommentsfirestore(finalI, userid);
+                                                            Log.d("은하", "여기 recyclerlist: "+recyclerlist);
+                                                            if(finalI == contentssize-1){
+                                                                Log.d("은하", "여기?");
+                                                                setrecyclerview(recyclerlist, context);
+                                                            }
+                                                        }
+                                                    });
                                         }
                                     }else{
                                         Log.d("은하", "get() failed");
@@ -111,6 +142,7 @@ public class Mypage extends AppCompatActivity {
             }
         });
     }
+
     public void setrecyclerview(ArrayList<ContentDB> recyclerlist, Context context){
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.mypage_recyclerview);
@@ -120,7 +152,7 @@ public class Mypage extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         //specify an adapter (see also next example)
-        MyAdapter adapter = new MyAdapter(recyclerlist);
+        MyAdapter adapter = new MyAdapter(context, recyclerlist, commentDBS);
         Log.d("은하", "여기까지왔나?");
         mRecyclerView.setAdapter(adapter);
 

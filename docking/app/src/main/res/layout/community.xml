@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:text="로그인이 필요한 서비스입니다.\n 로그인해주세요."
             android:textAlignment="center"
-            android:visibility="gone"/>
+            android:visibility="invisible"/>
     </LinearLayout>
 
 

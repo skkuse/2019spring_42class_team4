@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10pt"
-            android:text="매칭 중" />
+            android:text="연동 중" />
     </LinearLayout>
 
     <LinearLayout

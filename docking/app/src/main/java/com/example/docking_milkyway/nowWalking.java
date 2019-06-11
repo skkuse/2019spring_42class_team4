@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.UserHandle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -49,6 +50,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -457,28 +460,37 @@ public class nowWalking extends Fragment {
         final WalkingDB tmp_Walk = new WalkingDB(stTime, enTime, elTime, disT, d_SSN, walkLogArr);
 
         // 현재정보를 파이어베이스에 저장
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // 문서이름을 산책 끝 시간으로 정하기
-        int m = recorder.endtime.getMonthValue();
-        int d = recorder.endtime.getDayOfMonth();
-        int h = recorder.endtime.getHour();
-        int n = recorder.endtime.getMinute();
         String userID = "shapizz@naver.com";      // 문서 이름 유저아이디로 수정하기
-        db.collection("Walking").document(userID).set(tmp_Walk);
-        /*
-        DocumentReference docref = db.collection("Walking").document(userID);
-        int wNum = 1;
-        // wNum <- db.colletion("Walking").document(userID).get(length)
-        // wNum++1 -> 다시 set 하고
-        wNum +=1;
-        db.collection(("Walking").document(userID).)
-        db.collection("Walking").document(userID).collection(userID).document("h"+wNum).set(tmp_Walk);
-        //하도록 수정하겠습니다*/
+        final FirebaseFirestore walkDB = FirebaseFirestore.getInstance();
+        long[] historylength = new long[1];
 
-
-
-
+        // 산책기록의 length 가져와서 +=1
+        walkDB.collection("Walking").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        Log.d("상아", "데이터 있음 document : " + document.getData());
+                        historylength[0] = (long) document.getData().get("length");
+                        Log.d("상아", "length : "+ historylength[0]);
+                        historylength[0] +=1;
+                        Log.d("상아", "length+1 : "+ historylength[0]);
+                        // 산책기록 저장하기(WalkingDB object로 저장)
+                        walkDB.collection("Walking").document(userID).collection(userID).document("h"+historylength[0]).set(tmp_Walk);
+                        // 1 추가된 length 저장하기(그냥 저장)
+                        Map<String, Long> newhislen = new HashMap<>();
+                        newhislen.put("length", historylength[0]);
+                        Log.d("상아", "n : "+newhislen );
+                        walkDB.collection("Walking").document(userID).set(newhislen);
+                    }
+                    else{
+                        Log.d("상아", "데이터 없음");
+                        historylength[0]=0;
+                    }
+                }
+            }
+        });
 
         Toast.makeText(context.getApplicationContext(), "오늘의 산책을 저장하였습니다.", Toast.LENGTH_SHORT).show();
         Log.d("상아","산책 저장 완료");
@@ -491,7 +503,7 @@ public class nowWalking extends Fragment {
 
         startTime.setText("00시00분");
         elaspeTime.setText("00분00초");
-        Distance.setText("00.00km");
+        Distance.setText("00.0m");
 
     }
 

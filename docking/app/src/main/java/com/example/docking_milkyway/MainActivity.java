@@ -166,6 +166,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_mypage) {
             Intent intent = new Intent(this, Mypage.class);
             startActivity(intent);
+        } else if (id == R.id.nav_peristalsis) {
+            Intent intent = new Intent(this, Peristalsis.class);
+            startActivity(intent);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

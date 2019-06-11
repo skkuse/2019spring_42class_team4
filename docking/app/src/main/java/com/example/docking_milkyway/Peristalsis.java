@@ -1,26 +1,23 @@
 package com.example.docking_milkyway;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
-public class Matching extends AppCompatActivity {
-    boolean matchSuccess = false;
-    boolean matchAccept = false;
+public class Peristalsis extends AppCompatActivity {
+    boolean isConnected = false;
     Intent intent;
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.matching);
+        setContentView(R.layout.peristalsis);
         intent = new Intent(this.getIntent());
 
         View animView1 = (View) findViewById(R.id.animView1);
@@ -39,44 +36,37 @@ public class Matching extends AppCompatActivity {
         animView2.setAnimation(anim2);
         animView3.setAnimation(anim3);
 
-        Toast.makeText(getApplicationContext(), "산책메이트 매칭을 시작합니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "스마트밴드 연동을 시도합니다.", Toast.LENGTH_SHORT).show();
 
-        while(!matchAccept){
-            match();
+        while(!isConnected){
+            connect();
         }
-
     }
 
-    void match(){
-        // find and match appropriate user
 
+
+    void connect(){
+        // do peristalsis work with smart band
         /*
-         * matching
+         * connecting
          * code
          * space
          */
 
+        // Successfully connected
+        Toast.makeText(getApplicationContext(), "연동 성공", Toast.LENGTH_SHORT).show();
+        Log.d("연동시스템","연동 성공");
+        isConnected = true;
 
-        // Successfully matched
-        Toast.makeText(getApplicationContext(), "매칭 성공", Toast.LENGTH_SHORT).show();
-        Log.d("상아","매칭성공");
-        matchSuccess = true;
-        matchAccept = true;
-
-        if (matchAccept){
-            // 테스트를 위해 8초 대기화면으로 설정했습니다만 이후 매칭과정을 추가하겠습니다.
+        if (isConnected){
+            // 테스트를 위해 8초 대기화면으로 설정했습니다
             Handler hd = new Handler();
             hd.postDelayed(new Runnable() {
                 public void run() {
-                    Toast.makeText(getApplicationContext(), "산책을 시작합니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "연동에 성공하였습니다. 연동화면을 종료합니다.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
-            }, 15000);
+            }, 8000);
         }
-
-
     }
-
-
-
 }

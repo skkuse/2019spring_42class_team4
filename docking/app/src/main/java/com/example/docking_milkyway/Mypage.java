@@ -30,6 +30,7 @@ import java.util.List;
 public class Mypage extends AppCompatActivity {
 
     Button My_info;
+    Button follwoing;
     private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
@@ -138,6 +139,16 @@ public class Mypage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), my_info.class);
+                startActivity(intent);
+            }
+        });
+
+        follwoing = findViewById(R.id.following);
+
+        follwoing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public  void onClick(View v){
+                Intent intent = new Intent(getApplicationContext(), Follwing.class);
                 startActivity(intent);
             }
         });

@@ -48,6 +48,7 @@
         <activity android:name=".Mypage"></activity>
         <activity android:name=".view_history"></activity>
         <activity android:name=".my_info"></activity>
+        <activity android:name=".Follwing"></activity>
     </application>
 
 </manifest>

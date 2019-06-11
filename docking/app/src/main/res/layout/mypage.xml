@@ -37,16 +37,10 @@
                 android:text="following" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/log_out"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="로그아웃" />
 
         </LinearLayout>
 

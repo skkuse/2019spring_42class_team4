@@ -31,6 +31,7 @@ public class Mypage extends AppCompatActivity {
 
     Button My_info;
     Button follwoing;
+    Button log_out;
     private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
@@ -121,6 +122,17 @@ public class Mypage extends AppCompatActivity {
             @Override
             public  void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(), Follwing.class);
+                startActivity(intent);
+            }
+        });
+
+        log_out = findViewById(R.id.log_out);
+        log_out.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                SaveSharedPreference login_history = new SaveSharedPreference();
+                login_history.clearUserName(getApplicationContext());
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         });

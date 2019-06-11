@@ -2,31 +2,56 @@ package com.example.docking_milkyway;
 
 import com.google.firebase.Timestamp;
 
+import java.util.ArrayList;
+
 public class WalkingHistoryDB {
-    String Dog_SSN;
+    String dogssn;
     int distance;
     int elapsetime;
     Timestamp starttime;
     Timestamp endtime;
+    ArrayList<Double> walklog;
+
+    int length;
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+
+
+    public ArrayList<Double> getWalklog() {
+        return walklog;
+    }
+
+    public void setWalklog(ArrayList<Double> walklog) {
+        this.walklog = walklog;
+    }
+
+
+
 
     public WalkingHistoryDB() {
     }
 
     public WalkingHistoryDB(String dog_ssn, int dist, int elap, Timestamp stt, Timestamp end){
-        this.Dog_SSN = dog_ssn;
+        this.dogssn = dog_ssn;
         this.distance = dist;
         this.elapsetime = elap;
         this.starttime = stt;
         this.endtime = end;
     }
 
-    //public String getDog_SSN() {
-    //    return Dog_SSN;
-    //}
+    public String getdogssn() {
+        return dogssn;
+    }
 
-    //public void setDog_SSN(String dog_SSN) {
-    //    Dog_SSN = dog_SSN;
-    //}
+    public void setdogssn(String dog_SSN) {
+        dogssn = dog_SSN;
+    }
 
     public int getDistance() {
         return distance;

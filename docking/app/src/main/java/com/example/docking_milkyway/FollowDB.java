@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FollowDB {
 
-    ArrayList<String>following;
+    ArrayList<String> following;
     ArrayList<String> follower;
 
 

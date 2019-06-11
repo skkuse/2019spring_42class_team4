@@ -136,14 +136,17 @@ public class view_history extends AppCompatActivity {
                         history = document.toObject(WalkingHistoryDB.class);
                         history_len = document.get("length", int.class);
                         Log.d("view history", ""+ history_len);
-                        Log.d("",history.endtime.toString());
+
 
                         CollectionReference history_list_ref;
-                        history_list_ref = walkRef.collection("yong");
+                        history_list_ref = walkRef.collection(email);
 
                         ArrayList<Entry> distance_entries = new ArrayList<>();
                         ArrayList<Entry> time_entires = new ArrayList<>();
                         ArrayList<Timestamp> date_entries = new ArrayList<>();
+
+                        if(history_len < 5) num_view = history_len;
+                        else num_view = 5;
 
                         for(int i = history_len - num_view + 1; i <= history_len; i++) {
                             int cnt = i;
@@ -158,10 +161,10 @@ public class view_history extends AppCompatActivity {
                                             distance_entries.add(new Entry(cnt, temp.distance));
                                             time_entires.add(new Entry(cnt, temp.elapsetime));
                                             date_entries.add(temp.starttime);
-                                            //Log.d("Read History", "Read 성공" + entries);
+                                            Log.d("Read History", "Read 성공" + distance_entries);
 
-                                            if(distance_entries.size() == history_len && time_entires.size() == history_len ){
-                                                Collections.sort(date_entries);
+                                            if(distance_entries.size() == num_view && time_entires.size() == num_view ){
+                                                //Collections.sort(date_entries);
                                                 draw_distance_graph(distance_entries, date_entries);
                                                 draw_time_graph(time_entires, date_entries);
                                             }

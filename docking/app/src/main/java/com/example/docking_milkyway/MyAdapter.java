@@ -76,7 +76,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         //comments를 위한 recyclerview
         holder.commentsrecyclerview.setLayoutManager(new LinearLayoutManager(mcontext));
         //specify an adapter (see also next example)
-        if(commentDBS.get(contentdb.SSN) != null) {
+        Log.d("은하", "commentDBS =>"+commentDBS);
+        if(!commentDBS.get(contentdb.SSN).equals(null)) {
             CommentsAdapter adapter = new CommentsAdapter(commentDBS.get(contentdb.SSN));
             Log.d("은하", "여기까지왔나?");
             holder.commentsrecyclerview.setAdapter(adapter);

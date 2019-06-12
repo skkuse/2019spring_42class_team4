@@ -7,7 +7,7 @@
     <Button
         style="?android:attr/borderlessButtonStyle"
         android:id="@+id/commentuser"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
         android:textStyle="bold"
@@ -48,6 +48,7 @@
         android:background="#00ff0000"
         android:layout_marginLeft="10dp"
         android:layout_width="50dp"
+        android:layout_alignBaseline="@id/commentuser"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/commentlike"
         android:textSize="5pt"

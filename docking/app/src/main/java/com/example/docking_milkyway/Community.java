@@ -36,7 +36,6 @@ public class Community extends Fragment {
     private View view;
     private Button uploading, search;
     private TextView isnotlogin;
-    private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +50,7 @@ public class Community extends Fragment {
         final FirebaseFirestore fireDB = FirebaseFirestore.getInstance();
 
         ArrayList<ContentDB> recyclerlist = new ArrayList<>();
+        ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
         Context context = view.getContext();
         uploading = view.findViewById(R.id.upload);
         search = view.findViewById(R.id.search);
@@ -123,7 +123,7 @@ public class Community extends Fragment {
                                                             Log.d("은하", "commentslist에 잘 추가되었나? "+commentslist);
                                                         }
                                                         Log.d("은하", "finalI : "+ data.SSN +", commentslist : "+commentslist);
-                                                        if(commentslist != null) {
+                                                        if(!commentslist.equals(null)) {
                                                             commentDBS.add(data.SSN, commentslist);
                                                         }
                                                         Log.d("은하", "commentDBS : "+commentDBS.toString());
@@ -133,7 +133,7 @@ public class Community extends Fragment {
                                                     //getcommentsfirestore(finalI, userid);
                                                     Log.d("은하", "여기 recyclerlist: "+recyclerlist);
                                                     Log.d("은하", "여기?");
-                                                    setrecyclerview(recyclerlist, context);
+                                                    setrecyclerview(recyclerlist, context, commentDBS);
 
                                                 }
                                             });
@@ -151,7 +151,7 @@ public class Community extends Fragment {
 
     }
 
-    public void setrecyclerview(ArrayList<ContentDB> recyclerlist, Context context){
+    public void setrecyclerview(ArrayList<ContentDB> recyclerlist, Context context, ArrayList<ArrayList<CommentDB>> commentDBS){
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         //mRecyclerView.setHasFixedSize(true);
 

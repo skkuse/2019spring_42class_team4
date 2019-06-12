@@ -2,12 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.docking_milkyway">
 
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -27,7 +28,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -37,18 +37,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- crop activity -->
-        <activity
-            android:name="com.soundcloud.android.crop.CropImageActivity"
+        </activity>
+        <!-- crop activity -->
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity"
             android:screenOrientation="unspecified"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".login" />
-        <activity android:name=".signin" />
-        <activity android:name=".Matching" />
-        <activity android:name=".uploading" />
-        <activity android:name=".Mypage" />
-        <activity android:name=".view_history" />
-        <activity android:name=".my_info" />
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".login"></activity>
+        <activity android:name=".signin"></activity>
+        <activity android:name=".Matching"></activity>
+        <activity android:name=".uploading"></activity>
+        <activity android:name=".Mypage"></activity>
+        <activity android:name=".view_history"></activity>
+        <activity android:name=".my_info"></activity>
+        <activity android:name=".Follwing"></activity>
         <activity android:name=".Peristalsis"/>
     </application>
 

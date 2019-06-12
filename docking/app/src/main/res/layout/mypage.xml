@@ -30,10 +30,18 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <TextView
+            <Button
+                android:id="@+id/following"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="마이페이지" />
+                android:text="following" />
+
+            <Button
+                android:id="@+id/log_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="로그아웃" />
+
         </LinearLayout>
 
         <Button
@@ -49,5 +57,11 @@
             android:scrollbars="vertical" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </LinearLayout>

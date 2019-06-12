@@ -86,10 +86,13 @@ public class MainActivity extends AppCompatActivity
 
         // create Navigation Header
         // 여기서 유저 프로필 이미지 , 유저이름, 유저정보 수정해주시면 될 것 같습니다!
+        SaveSharedPreference login_history = new SaveSharedPreference();
+        Log.d("상아", login_history.getUserName(getApplicationContext()));
+        String userID = login_history.getUserName(getApplicationContext());
         View hView =  navigationView.inflateHeaderView(R.layout.nav_header);
         ImageView userIMG = (ImageView)hView.findViewById(R.id.userImg);
         TextView userN = (TextView)hView.findViewById(R.id.userNickname);
-        userN.setText("newUserNIckname!");
+        userN.setText(userID);
 
         //firebase 연동 확인
         //FirebaseDatabase database = FirebaseDatabase.getInstance();

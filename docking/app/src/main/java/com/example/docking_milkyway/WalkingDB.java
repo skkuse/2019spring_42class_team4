@@ -8,13 +8,13 @@ public class WalkingDB {
     Timestamp starttime;
     Timestamp endtime;
     int elapsetime;
-    int dogssn;
+    String dogssn;
     int distance;
     ArrayList<Double> walklog;
 
     public WalkingDB() { }
 
-    public WalkingDB(Timestamp starttime, Timestamp endtime, int elapsetime, int distance, int dogssn, ArrayList<Double> walklog) {
+    public WalkingDB(Timestamp starttime, Timestamp endtime, int elapsetime, int distance, String dogssn, ArrayList<Double> walklog) {
         this.starttime = starttime;
         this.endtime = endtime;
         this.elapsetime = elapsetime;
@@ -51,10 +51,10 @@ public class WalkingDB {
         this.distance = distance;
     }
 
-    public int getDogssn() {
+    public String getDogssn() {
         return dogssn;
     }
-    public void setDogssn(int dogssn) {
+    public void setDogssn(String dogssn) {
         this.dogssn = dogssn;
     }
 

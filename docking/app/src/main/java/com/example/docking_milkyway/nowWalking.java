@@ -369,7 +369,7 @@ public class nowWalking extends Fragment {
         }
         return "error";
 
-    }
+        }
 
     // --------------------------------------------------------------------------------------------------------------------------------------//
 
@@ -456,11 +456,15 @@ public class nowWalking extends Fragment {
         Timestamp enTime    = LocalDateTimeToTimestamp(recorder.endtime);
         int elTime          = (int)recorder.elaspetime;
         int disT            = (int)recorder.distance;
-        int d_SSN = 1111;    // 이후 사용자 정보 가져와서 연결되면 기입
+        String d_SSN = "1111";    // 이후 사용자 정보 가져와서 연결되면 기입
         final WalkingDB tmp_Walk = new WalkingDB(stTime, enTime, elTime, disT, d_SSN, walkLogArr);
 
         // 현재정보를 파이어베이스에 저장
-        String userID = "shapizz@naver.com";      // 문서 이름 유저아이디로 수정하기
+        String userID;
+        SaveSharedPreference login_history = new SaveSharedPreference();
+        Log.d("상아", login_history.getUserName(context.getApplicationContext()));
+        userID = login_history.getUserName(context.getApplicationContext());
+        //String userID = "shapizz@naver.com";      // 문서 이름 유저아이디로 수정하기
         final FirebaseFirestore walkDB = FirebaseFirestore.getInstance();
         long[] historylength = new long[1];
 

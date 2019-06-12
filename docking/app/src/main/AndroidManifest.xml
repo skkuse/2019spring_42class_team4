@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DM"></activity>
+
         <!-- 사진 촬영을 위한 provide -->
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -51,6 +51,7 @@
         <activity android:name=".my_info"></activity>
         <activity android:name=".Follwing"></activity>
         <activity android:name=".Peristalsis"/>
+        <activity android:name=".DM"></activity>
     </application>
 
 </manifest>

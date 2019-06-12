@@ -456,7 +456,7 @@ public class nowWalking extends Fragment {
         Timestamp enTime    = LocalDateTimeToTimestamp(recorder.endtime);
         int elTime          = (int)recorder.elaspetime;
         int disT            = (int)recorder.distance;
-        String d_SSN = "1111";    // 이후 사용자 정보 가져와서 연결되면 기입
+        int d_SSN = 1111;    // 이후 사용자 정보 가져와서 연결되면 기입
         final WalkingDB tmp_Walk = new WalkingDB(stTime, enTime, elTime, disT, d_SSN, walkLogArr);
 
         // 현재정보를 파이어베이스에 저장

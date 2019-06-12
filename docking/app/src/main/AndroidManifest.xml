@@ -49,6 +49,7 @@
         <activity android:name=".Mypage" />
         <activity android:name=".view_history" />
         <activity android:name=".my_info" />
+        <activity android:name=".Peristalsis"/>
     </application>
 
 </manifest>

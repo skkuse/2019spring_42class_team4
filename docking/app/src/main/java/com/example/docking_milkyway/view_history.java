@@ -121,69 +121,80 @@ public class view_history extends AppCompatActivity {
         SaveSharedPreference login_history = new SaveSharedPreference();
 
         email = login_history.getUserName(getApplicationContext());
+        
+        DocumentReference walkRef = null;
 
         final FirebaseFirestore WalkingDB = FirebaseFirestore.getInstance();
+        if(email.isEmpty()||email == "NULL") {
+            Log.d("view history", "산책기록 없음!");
+            Toast.makeText(view_history.this, "기록이 존재하지 않습니다.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+        else {
+            walkRef = WalkingDB.collection("Walking").document(email);
 
-        DocumentReference walkRef = WalkingDB.collection("Walking").document(email);
+            DocumentReference finalWalkRef = walkRef;
+            walkRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Log.d("view history", "산책기록 확인!");
+                            history = document.toObject(WalkingHistoryDB.class);
+                            history_len = document.get("length", int.class);
+                            Log.d("view history", "" + history_len);
 
-        walkRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        Log.d("view history", "산책기록 확인!");
-                        history = document.toObject(WalkingHistoryDB.class);
-                        history_len = document.get("length", int.class);
-                        Log.d("view history", ""+ history_len);
 
+                            CollectionReference history_list_ref;
+                            history_list_ref = finalWalkRef.collection(email);
 
-                        CollectionReference history_list_ref;
-                        history_list_ref = walkRef.collection(email);
+                            ArrayList<Entry> distance_entries = new ArrayList<>();
+                            ArrayList<Entry> time_entires = new ArrayList<>();
+                            ArrayList<Timestamp> date_entries = new ArrayList<>();
 
-                        ArrayList<Entry> distance_entries = new ArrayList<>();
-                        ArrayList<Entry> time_entires = new ArrayList<>();
-                        ArrayList<Timestamp> date_entries = new ArrayList<>();
+                            if (history_len < 5) num_view = history_len;
+                            else num_view = 5;
 
-                        if(history_len < 5) num_view = history_len;
-                        else num_view = 5;
+                            for (int i = history_len - num_view + 1; i <= history_len; i++) {
+                                int cnt = i;
+                                history_list_ref.document("h" + i)
+                                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot walking_document = task.getResult();//.toObject(WalkingHistoryDB.class);
+                                            if (walking_document.exists()) {
+                                                WalkingHistoryDB temp = walking_document.toObject(WalkingHistoryDB.class);
+                                                distance_entries.add(new Entry(cnt, temp.distance));
+                                                time_entires.add(new Entry(cnt, temp.elapsetime));
+                                                date_entries.add(temp.starttime);
+                                                Log.d("Read History", "Read 성공" + distance_entries);
 
-                        for(int i = history_len - num_view + 1; i <= history_len; i++) {
-                            int cnt = i;
-                            history_list_ref.document("h" + i)
-                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot walking_document = task.getResult();//.toObject(WalkingHistoryDB.class);
-                                        if(walking_document.exists()){
-                                            WalkingHistoryDB temp = walking_document.toObject(WalkingHistoryDB.class);
-                                            distance_entries.add(new Entry(cnt, temp.distance));
-                                            time_entires.add(new Entry(cnt, temp.elapsetime));
-                                            date_entries.add(temp.starttime);
-                                            Log.d("Read History", "Read 성공" + distance_entries);
-
-                                            if(distance_entries.size() == num_view && time_entires.size() == num_view ){
-                                                //Collections.sort(date_entries);
-                                                draw_distance_graph(distance_entries, date_entries);
-                                                draw_time_graph(time_entires, date_entries);
+                                                if (distance_entries.size() == num_view && time_entires.size() == num_view) {
+                                                    //Collections.sort(date_entries);
+                                                    draw_distance_graph(distance_entries, date_entries);
+                                                    draw_time_graph(time_entires, date_entries);
+                                                }
                                             }
+                                        } else {
+                                            Log.d("Read History", "기록 데이터 read 실패");
                                         }
-                                    }else{ Log.d("Read History", "기록 데이터 read 실패"); }
-                                }
-                            });
+                                    }
+                                });
 
+                            }
+                        } else {
+                            Log.d("view history", "산책기록 없음!");
+                            Toast.makeText(view_history.this, "기록이 존재하지 않습니다.", Toast.LENGTH_LONG).show();
+                            finish();
                         }
-                    }else{
-                        Log.d("view history", "산책기록 없음!");
-                        Toast.makeText(view_history.this, "기록이 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-                        finish();
+                    } else {
+                        Log.d("view history", "get() failed");
                     }
-                }else{
-                    Log.d("view history", "get() failed");
-                }
 
-            }
-        });
+                }
+            });
+        }
     }
 }

@@ -36,6 +36,7 @@ public class Community extends Fragment {
     private View view;
     private Button uploading, search;
     private TextView isnotlogin;
+    private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,6 @@ public class Community extends Fragment {
         final FirebaseFirestore fireDB = FirebaseFirestore.getInstance();
 
         ArrayList<ContentDB> recyclerlist = new ArrayList<>();
-        ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
         Context context = view.getContext();
         uploading = view.findViewById(R.id.upload);
         search = view.findViewById(R.id.search);
@@ -123,17 +123,21 @@ public class Community extends Fragment {
                                                             Log.d("은하", "commentslist에 잘 추가되었나? "+commentslist);
                                                         }
                                                         Log.d("은하", "finalI : "+ data.SSN +", commentslist : "+commentslist);
-                                                        if(!commentslist.equals(null)) {
-                                                            commentDBS.add(data.SSN, commentslist);
+                                                        if(!commentslist.isEmpty()) {
+                                                            Log.d("은하", data.SSN + "의 commentlist는 null이 아님!");
+                                                            commentDBS.add(commentslist);
+                                                            //getcommentsfirestore(finalI, userid);
+                                                            Log.d("은하", "여기 recyclerlist: "+recyclerlist);
+                                                            Log.d("은하", "여기?");
+                                                            setrecyclerview(recyclerlist, context);
+                                                        }
+                                                        else{
+                                                            commentDBS.add(commentslist);
                                                         }
                                                         Log.d("은하", "commentDBS : "+commentDBS.toString());
                                                     } else {
                                                         Log.d("은하", "Error getting documents: ", task.getException());
                                                     }
-                                                    //getcommentsfirestore(finalI, userid);
-                                                    Log.d("은하", "여기 recyclerlist: "+recyclerlist);
-                                                    Log.d("은하", "여기?");
-                                                    setrecyclerview(recyclerlist, context, commentDBS);
 
                                                 }
                                             });
@@ -151,7 +155,7 @@ public class Community extends Fragment {
 
     }
 
-    public void setrecyclerview(ArrayList<ContentDB> recyclerlist, Context context, ArrayList<ArrayList<CommentDB>> commentDBS){
+    public void setrecyclerview(ArrayList<ContentDB> recyclerlist, Context context){
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         //mRecyclerView.setHasFixedSize(true);
 

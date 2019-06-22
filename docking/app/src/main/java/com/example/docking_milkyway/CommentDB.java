@@ -10,8 +10,11 @@ public class CommentDB {
     int parent_Content;
     String User_SSN;
     Integer super_C_Num;
+    boolean thereiscomment = true;
 
-    public CommentDB() { }
+    public CommentDB() {
+        thereiscomment = false;
+    }
 
     //일반 댓글
     public CommentDB(int c_Num, String substance, Date date, int parent_Content, String user_SSN) {

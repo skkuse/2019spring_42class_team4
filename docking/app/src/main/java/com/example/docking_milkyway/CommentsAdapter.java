@@ -57,7 +57,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         CommentDB commentdb = mData.get(position);
         Log.d("은하", commentdb.User_SSN+", "+commentdb.getSubstance()+", "+commentdb.getLike());
         String user_id = commentdb.User_SSN;
-        Log.d("은하", "comment의 user_id? "+user_id);
+        Log.d("은하", "comment의 user_id? "+user_id + "comment.parentid="+commentdb.parent_Content);
         holder.userid.setText(user_id);
         holder.commentstext.setText(commentdb.getSubstance());
         String thislike = Integer.toString(commentdb.getLike());

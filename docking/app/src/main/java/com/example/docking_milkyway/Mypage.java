@@ -80,17 +80,21 @@ public class Mypage extends AppCompatActivity {
                                                             Log.d("은하", "commentslist에 잘 추가되었나? "+commentslist);
                                                         }
                                                         Log.d("은하", "finalI : "+ data.SSN +", commentslist : "+commentslist);
-                                                        if(commentslist != null) {
-                                                            commentDBS.add(data.SSN, commentslist);
+                                                        if(!commentslist.isEmpty()) {
+                                                            Log.d("은하", data.SSN + "의 commentlist는 null이 아님!");
+                                                            commentDBS.add(commentslist);
+                                                            //getcommentsfirestore(finalI, userid);
+                                                            Log.d("은하", "여기 recyclerlist: "+recyclerlist);
+                                                            Log.d("은하", "여기?");
+                                                            setrecyclerview(recyclerlist, context);
+                                                        }
+                                                        else{
+                                                            commentDBS.add(commentslist);
                                                         }
                                                         Log.d("은하", "commentDBS : "+commentDBS.toString());
                                                     } else {
                                                         Log.d("은하", "Error getting documents: ", task.getException());
                                                     }
-                                                    //getcommentsfirestore(finalI, userid);
-                                                    Log.d("은하", "여기 recyclerlist: "+recyclerlist);
-                                                    Log.d("은하", "여기?");
-                                                    setrecyclerview(recyclerlist, context);
 
                                                 }
                                             });
@@ -101,6 +105,7 @@ public class Mypage extends AppCompatActivity {
                             }
                         }
                     });
+
 
         }
 

@@ -21,7 +21,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     //아이템 뷰를 저장하는 뷰홀더 클래스
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView writer;
+        Button writer;
         TextView likes;
         TextView contentssubstance;
         TextView contentstext;
@@ -72,6 +72,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.likes.setText(thislike);
         Log.d("은하", contentdb.getuserSSN()+", "+contentdb.gettext()+", "+contentdb.getlike());
         Button contentslike = holder.contentslike;
+
+        //여기 용태씨가 수정하시면 됩니다!
+        holder.writer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하", "해당 writer의 page로 이동합니다.");
+            }
+        });
 
         //comments를 위한 recyclerview
         holder.commentsrecyclerview.setLayoutManager(new LinearLayoutManager(mcontext));

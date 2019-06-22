@@ -62,6 +62,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         holder.commentstext.setText(commentdb.getSubstance());
         String thislike = Integer.toString(commentdb.getLike());
         holder.likes.setText("like " +thislike);
+
+        //여기 용태씨가 수정하시면 됩니다!
+        holder.userid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하", "해당 writer의 page로 이동합니다.");
+            }
+        });
     }
 
     //getItemCount() - 전체 데이터 갯수 리턴.

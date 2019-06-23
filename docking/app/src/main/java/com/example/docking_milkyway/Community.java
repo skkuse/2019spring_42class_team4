@@ -109,7 +109,7 @@ public class Community extends Fragment {
                                     ArrayList<CommentDB> commentslist = new ArrayList<>();
                                     fireDB.collection("Comments")
                                             .whereEqualTo("User_SSN", userid)
-                                            .whereEqualTo("C_Num", data.SSN)
+                                            .whereEqualTo("parent_content", data.SSN)
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                 @Override

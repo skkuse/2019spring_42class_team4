@@ -3,6 +3,7 @@ package com.example.docking_milkyway;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -25,9 +30,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         Button writer;
         TextView likes;
-        TextView contentssubstance;
+        ImageView contentssubstance;
         TextView contentstext;
         Button contentslike;
+        Button contentsdelete;
         RecyclerView commentsrecyclerview;
 
         ViewHolder(View itemView) {
@@ -40,12 +46,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             contentssubstance = itemView.findViewById(R.id.ccontentssubstance);
             contentslike = itemView.findViewById(R.id.contentlikebtn);
             commentsrecyclerview = itemView.findViewById(R.id.commentsrecyclerview);
+            contentsdelete = itemView.findViewById(R.id.contentdeletebtn);
         }
     }
 
     //생성자에서 데이터 리스트 객체를 전달받음.
     MyAdapter(Context context, ArrayList<ContentDB> list, ArrayList<ArrayList<CommentDB>> commentlist){
         mData = list;
+        mcontext = context;
         commentDBS = commentlist;
         Log.d("은하", String.valueOf(mData.size()));
     }
@@ -74,6 +82,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.likes.setText(thislike);
         Log.d("은하", contentdb.getuserSSN()+", "+contentdb.gettext()+", "+contentdb.getlike());
         Button contentslike = holder.contentslike;
+        Button contentsdelete = holder.contentsdelete;
+        Glide.with(mcontext).load(contentdb.substance).into(holder.contentssubstance);
+
 
         //여기 용태씨가 수정하시면 됩니다!
         holder.writer.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +99,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 v.getContext().startActivity(intent);
             }
         });
-
         /*
         //comments를 위한 recyclerview
         holder.commentsrecyclerview.setLayoutManager(new LinearLayoutManager(mcontext));
@@ -101,6 +111,28 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             holder.commentsrecyclerview.setAdapter(adapter);
         }
         */
+
+        contentsdelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseFirestore.getInstance().collection("Contents")
+                        .document(contentdb.SSN)
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("은하", "delete success!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("은하", "Error deleting document", e);
+                            }
+                        });
+
+            }
+        });
 
         contentslike.setOnClickListener(new View.OnClickListener() {
             @Override

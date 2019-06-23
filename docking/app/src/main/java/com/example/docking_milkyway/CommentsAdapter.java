@@ -57,11 +57,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         CommentDB commentdb = mData.get(position);
         Log.d("은하", commentdb.User_SSN+", "+commentdb.getSubstance()+", "+commentdb.getLike());
         String user_id = commentdb.User_SSN;
-        Log.d("은하", "comment의 user_id? "+user_id);
+        Log.d("은하", "comment의 user_id? "+user_id + "comment.parentid="+commentdb.parent_Content);
         holder.userid.setText(user_id);
         holder.commentstext.setText(commentdb.getSubstance());
         String thislike = Integer.toString(commentdb.getLike());
         holder.likes.setText("like " +thislike);
+
+        //여기 용태씨가 수정하시면 됩니다!
+        holder.userid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("은하", "해당 writer의 page로 이동합니다.");
+            }
+        });
     }
 
     //getItemCount() - 전체 데이터 갯수 리턴.

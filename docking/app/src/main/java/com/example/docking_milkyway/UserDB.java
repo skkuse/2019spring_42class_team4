@@ -8,6 +8,7 @@ public class UserDB {
     int age;
     String sex;
     String usertype;
+    //String profile;
 
     int count = 0;
 

@@ -80,7 +80,7 @@ public class Matching extends AppCompatActivity {
         // 유저 이메일, 반려견 견종 받아오기
         SaveSharedPreference login_history = new SaveSharedPreference();
         myUserID = login_history.getUserName(getApplicationContext());
-        dogSpecies = "Chihuahua";               // 유저정보에서 가져오는걸로 수정,비반려인 유저의 경우 finish 되도록
+        dogSpecies = "Maltese";               // 유저정보에서 가져오는걸로 수정,비반려인 유저의 경우 finish 되도록
 
         // 유저정보에 등록된 견종으로 강아지의 특성정보 asset json에서 받아오기
         myDogInfo = getDogAttriPart(dogSpecies); // match_dog class로 구성

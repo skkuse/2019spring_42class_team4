@@ -1,7 +1,7 @@
 package com.example.docking_milkyway;
 
 public class DogDB {
-    int SSN;
+    String SSN;
     String name;
     String species;
     int age;
@@ -10,12 +10,12 @@ public class DogDB {
 
     public DogDB(){ }
 
-    public DogDB(int SSN, String name) {
+    public DogDB(String SSN, String name) {
         this.SSN = SSN;
         this.name = name;
     }
 
-    public DogDB(int SSN, String name, String species, int age, String sex, int weight) {
+    public DogDB(String SSN, String name, String species, int age, String sex, int weight) {
         this.SSN = SSN;
         this.name = name;
         this.species = species;

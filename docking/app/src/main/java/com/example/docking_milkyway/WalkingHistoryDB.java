@@ -32,8 +32,6 @@ public class WalkingHistoryDB {
     }
 
 
-
-
     public WalkingHistoryDB() {
     }
 

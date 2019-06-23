@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true">
 
     <LinearLayout
@@ -84,22 +85,13 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <me.gujun.android.taggroup.TagGroup
+                android:layout_marginLeft="20dp"
+                android:id="@+id/tag_group"
+                style="@style/TagGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="태그를 입력하세요." />
-
-                <EditText
-                    android:id="@+id/taginsert"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                app:atg_isAppendMode="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

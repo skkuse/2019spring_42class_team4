@@ -7,7 +7,7 @@ public class CommentDB {
     String substance;
     Date date;
     int like;
-    int parent_Content;
+    String parent_Content;
     String User_SSN;
     Integer super_C_Num;
     boolean thereiscomment = true;
@@ -17,7 +17,7 @@ public class CommentDB {
     }
 
     //일반 댓글
-    public CommentDB(int c_Num, String substance, Date date, int parent_Content, String user_SSN) {
+    public CommentDB(int c_Num, String substance, Date date, String parent_Content, String user_SSN) {
         C_Num = c_Num;
         this.substance = substance;
         this.date = date;
@@ -28,7 +28,7 @@ public class CommentDB {
     }
 
     //대댓글
-    public CommentDB(int c_Num, String substance, Date date, int parent_Content, String user_SSN, int super_C_Num) {
+    public CommentDB(int c_Num, String substance, Date date, String parent_Content, String user_SSN, int super_C_Num) {
         C_Num = c_Num;
         this.substance = substance;
         this.date = date;
@@ -70,11 +70,11 @@ public class CommentDB {
         this.like = like;
     }
 
-    public int getParent_Content() {
+    public String getParent_Content() {
         return parent_Content;
     }
 
-    public void setParent_Content(int parent_Content) {
+    public void setParent_Content(String parent_Content) {
         this.parent_Content = parent_Content;
     }
 

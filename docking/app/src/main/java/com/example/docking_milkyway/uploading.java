@@ -2,6 +2,7 @@ package com.example.docking_milkyway;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.docking_milkyway.util.ImageResizeUtils;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,11 +38,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.soundcloud.android.crop.Crop;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Permission;
@@ -55,14 +60,14 @@ public class uploading extends AppCompatActivity {
     private Button getcamera, getalbum, uploadok, uplodacancel;
     private EditText textinsert, taginsert, locationinsert;
 
-    private Uri photoUri;
+    private Uri savingUri;
     private String currentPhotoPath; //실제 사진 파일 저장 경로
     String mImageCaptureName; //이미지 이름
 
     private File tempFile;
 
     String user_id;
-    private StorageReference storageReference;
+    private StorageReference storageRef;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
 
@@ -182,7 +187,7 @@ public class uploading extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        Uri savingUri = Uri.fromFile(tempFile);
+        savingUri = Uri.fromFile(tempFile);
         Crop.of(photoUri, savingUri).asSquare().start(this);
     }
 
@@ -210,7 +215,7 @@ public class uploading extends AppCompatActivity {
         tedPermission();
 
         firebaseFirestore = FirebaseFirestore.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
+        storageRef = FirebaseStorage.getInstance().getReference();
 
         getcamera = findViewById(R.id.getcamera);
         getalbum = findViewById(R.id.getalbum);
@@ -253,64 +258,139 @@ public class uploading extends AppCompatActivity {
                     tag = true;
                 }
 
-                if(TextUtils.isEmpty(text)){
+                if(TextUtils.isEmpty(text) || Uri.EMPTY.equals(savingUri)){
                     Toast.makeText(v.getContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
                 }
                 else {
 
-                    ContentDB temp_content = new ContentDB("image", text, tag, userid);
+                    Bitmap bitmap = null;
 
-                    DocumentReference contentsRef = firebaseFirestore.collection("Contents").document(userid);
-                    contentsRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), savingUri);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] data = baos.toByteArray();
+
+                    Uri file = savingUri;
+                    StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
+
+                    UploadTask uploadTask = riversRef.putBytes(data);
+                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    Log.d("은하", "contents document list 존재 확인");
-                                    long newcontentssize = (long) document.getData().get("contentssize");
-                                    int SSN = (int) newcontentssize;
-                                    temp_content.SSN = SSN;
-                                    temp_content.setText(text);
-                                    firebaseFirestore.collection("Contents")
-                                            .add(temp_content)
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                @Override
-                                                public void onSuccess(DocumentReference documentReference) {
-                                                    Log.d("은하", "DocumentSnapshot written with ID: " + documentReference.getId());
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w("은하", "Error adding document", e);
-                                                }
-                                            });
-                                    //contentssize update to firebase
-                                    newcontentssize++;
-                                    firebaseFirestore.collection("Contents")
-                                            .document(userid).update("contentssize", newcontentssize);
-                                    Intent intent = new Intent(v.getContext(), MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Log.d("은하", "최초 게시글");
-                                    ArrayList<ContentDB> list = new ArrayList<>();
-                                    int SSN = 0;
-                                    temp_content.SSN = SSN;
-                                    temp_content.setText(text);
-                                    list.add(temp_content);
-                                    firebaseFirestore.collection("Contents").document(userid).set(list);
-                                    //contentssize setting to firebase
-                                    //이 아래 줄 수정 필요
-                                    //firebaseFirestore.collection("Contents").document(userid).set("contentssize", 1);
-                                    Intent intent = new Intent(v.getContext(), MainActivity.class);
-                                    startActivity(intent);
-                                }
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if(!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+                            return riversRef.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                Uri downloadUri = task.getResult();
+
+                                ContentDB temp_content = new ContentDB(downloadUri.toString(), text, false, userid);
+
+                                firebaseFirestore.collection("Contents")
+                                        .add(temp_content)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                String SSN = documentReference.getId();
+                                                Log.d("은하", "DocumentSnapshot written with ID : " + SSN);
+                                                firebaseFirestore.collection("Contents").document(SSN)
+                                                        .update("SSN", SSN)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d("은하", "DocumentSnapshot successfully updated!");
+                                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                                startActivity(intent);
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w("은하", "Error updating document", e);
+                                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                                startActivity(intent);
+                                                            }
+                                                        });
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d("은하", "Error adding document", e);
+                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                startActivity(intent);
+                                            }
+                                        });
+                                /*
+                                DocumentReference contentsRef = firebaseFirestore.collection("Contents").document(userid);
+                                contentsRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (document.exists()) {
+                                                Log.d("은하", "contents document list 존재 확인");
+                                                long newcontentssize = (long) document.getData().get("contentssize");
+                                                int SSN = (int) newcontentssize;
+                                                temp_content.SSN = SSN;
+                                                temp_content.setText(text);
+                                                firebaseFirestore.collection("Contents")
+                                                        .add(temp_content)
+                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentReference documentReference) {
+                                                                Log.d("은하", "DocumentSnapshot written with ID: " + documentReference.getId());
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w("은하", "Error adding document", e);
+                                                            }
+                                                        });
+                                                //contentssize update to firebase
+                                                newcontentssize++;
+                                                firebaseFirestore.collection("Contents")
+                                                        .document(userid).update("contentssize", newcontentssize);
+                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                startActivity(intent);
+                                            } else {
+                                                Log.d("은하", "최초 게시글");
+                                                ArrayList<ContentDB> list = new ArrayList<>();
+                                                int SSN = 0;
+                                                temp_content.SSN = SSN;
+                                                temp_content.setText(text);
+                                                list.add(temp_content);
+                                                firebaseFirestore.collection("Contents").document(userid).set(list);
+                                                //contentssize setting to firebase
+                                                //이 아래 줄 수정 필요
+                                                //firebaseFirestore.collection("Contents").document(userid).set("contentssize", 1);
+                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                startActivity(intent);
+                                            }
+                                        } else {
+                                            Log.d("은하", "get() failed");
+                                        }
+                                    }
+                                });*/
+
                             } else {
-                                Log.d("은하", "get() failed");
+                                //handle fail
+                                Log.d("은하", "image upload fail");
                             }
                         }
                     });
+
                 }
 
             }

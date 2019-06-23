@@ -17,8 +17,15 @@ public class SaveSharedPreference {
 
     static final String PREF_USER_NAME= "NULL";
 
+
     public SharedPreferences getSharedPreferences(Context ctx) {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
+    }
+
+
+    public String getUserName(Context ctx)
+    {
+        return getSharedPreferences(ctx).getString(PREF_USER_NAME, "");
     }
 
     public void setUserName(Context ctx, String userName)
@@ -27,12 +34,6 @@ public class SaveSharedPreference {
         editor.putString(PREF_USER_NAME, userName);
         editor.commit();
     }
-
-    public String getUserName(Context ctx)
-    {
-        return getSharedPreferences(ctx).getString(PREF_USER_NAME, "");
-    }
-
     public void clearUserName(Context ctx)
     {
         SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();

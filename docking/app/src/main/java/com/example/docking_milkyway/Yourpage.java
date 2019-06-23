@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,25 +21,29 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class Mypage extends AppCompatActivity {
+public class Yourpage extends AppCompatActivity {
 
-    Button My_info;
-    Button follwoing;
-    Button log_out;
+    Button Follow;
+    String userid;
+
     private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mypage);
+        setContentView(R.layout.yourpage);
 
-        SaveSharedPreference login_hist = new SaveSharedPreference();
+        Intent intent = getIntent();
+        String userid = intent.getStringExtra("writer");
+        //SaveSharedPreference visit_hist = new SaveSharedPreference();
+        //String userid = visit_hist.getVisitName(getApplicationContext());
 
-        String userid = login_hist.getUserName(getApplicationContext());
+        Log.d("용태태", "방문 페이지 : "+userid);
+
 
         FirebaseFirestore fireDB = FirebaseFirestore.getInstance();
         ArrayList<ContentDB> recyclerlist = new ArrayList<>();
-        Context context = Mypage.this;
+        Context context = Yourpage.this;
 
 
         if(userid != null) {
@@ -104,37 +109,23 @@ public class Mypage extends AppCompatActivity {
 
 
 
-        My_info = findViewById(R.id.my_info);
-
-        My_info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), my_info.class);
-                startActivity(intent);
-            }
-        });
-
-        follwoing = findViewById(R.id.Follow);
-
-        follwoing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public  void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(), Follwing.class);
-                startActivity(intent);
-            }
-        });
-
-        log_out = findViewById(R.id.log_out);
-        log_out.setOnClickListener(new View.OnClickListener(){
+        Follow = findViewById(R.id.Follow);
+        Follow.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                SaveSharedPreference login_history = new SaveSharedPreference();
-                login_history.clearUserName(getApplicationContext());
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                SaveSharedPreference login_hist = new SaveSharedPreference();
+                String target_id = login_hist.getUserName(getApplicationContext());
+
+                Log.d("용태", "target_id : " + target_id + "\nuser_id : " + userid);
+
+                Follow_unFollow toggle = new Follow_unFollow(target_id, userid);
+                String status = toggle.Follow_toggle();
+                Log.d("팔로우/언팔", "/" +  status);
+                Toast.makeText(getApplicationContext(),status,Toast.LENGTH_LONG).show();
             }
         });
     }
+
 
     public void setrecyclerview(ArrayList<ContentDB> recyclerlist, Context context){
 

@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:textSize="10pt"
             android:text="마이페이지"
-            android:id="@+id/signin"/>
+            android:id="@+id/user_id"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:padding="20dp">
 
             <Button
-                android:id="@+id/following"
+                android:id="@+id/Follow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="following" />

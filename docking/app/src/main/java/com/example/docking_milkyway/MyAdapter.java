@@ -1,6 +1,8 @@
 package com.example.docking_milkyway;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -78,6 +80,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Log.d("은하", "해당 writer의 page로 이동합니다.");
+                //SaveSharedPreference visit_hist = new SaveSharedPreference();
+                //visit_hist.setVisitName(v.getContext() , holder.writer.getText().toString());
+                Intent intent = new Intent(v.getContext(), Yourpage.class );
+                intent.putExtra("writer",holder.writer.getText().toString());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                v.getContext().startActivity(intent);
             }
         });
 

@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:textSize="10pt"
             android:text="로그인"
-            android:id="@+id/signin"/>
+            android:id="@+id/user_id"/>
     </LinearLayout>
 
     <LinearLayout

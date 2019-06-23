@@ -8,15 +8,16 @@ public class matching_doginfo {
     int potentialForPlayfulness;
     int sensitivityLevel;
     int size;
-    String userGetMatchRequest;
-    String userMatchRequestAccepted;
+    String uRecverGetReqFrom;
+    String uSenderGetAckFrom;
+
 
 
     public matching_doginfo(){}
 
     public matching_doginfo(String dogSpecies, int exerciseNeeds, int energyLevel, int friendlyTowardStrangers,
                             int potentialForPlayfulness, int sensitivityLevel, int size,
-                            String userGetMatchRequest, String userMatchRequestAccepted  ){
+                            String uSenderGetReqFrom, String uSenderGetAckFrom){
         this.dogSpecies=dogSpecies;
         this.exerciseNeeds=exerciseNeeds;
         this.energyLevel=energyLevel;
@@ -24,8 +25,8 @@ public class matching_doginfo {
         this.potentialForPlayfulness=potentialForPlayfulness;
         this.sensitivityLevel=sensitivityLevel;
         this.size=size;
-        this.userGetMatchRequest=userGetMatchRequest;
-        this.userMatchRequestAccepted = userMatchRequestAccepted;
+        this.uRecverGetReqFrom = uSenderGetReqFrom;
+        this.uSenderGetAckFrom = uSenderGetAckFrom;
     }
 
     public String getDogSpecies() {
@@ -77,18 +78,18 @@ public class matching_doginfo {
         this.size = size;
     }
 
-    public String getUserGetMatchRequest() {
-        return userGetMatchRequest;
+    public String getuRecverGetReqFrom() {
+        return uRecverGetReqFrom;
     }
-    public void setUserGetMatchRequest(String userGetMatchRequest) {
-        this.userGetMatchRequest = userGetMatchRequest;
+    public void setuRecverGetReqFrom(String uRecverGetReqFrom) {
+        this.uRecverGetReqFrom = uRecverGetReqFrom;
     }
 
-    public String getUserMatchRequestAccepted() {
-        return userMatchRequestAccepted;
+    public String getuSenderGetAckFrom() {
+        return uSenderGetAckFrom;
     }
-    public void setUserMatchRequestAccepted(String userMatchRequestAccepted) {
-        this.userMatchRequestAccepted = userMatchRequestAccepted;
+    public void setuSenderGetAckFrom(String uSenderGetAckFrom) {
+        this.uSenderGetAckFrom = uSenderGetAckFrom;
     }
 }
 

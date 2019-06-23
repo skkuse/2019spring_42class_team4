@@ -1,15 +1,11 @@
 package com.example.docking_milkyway;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,20 +28,31 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+// 상아 : matching system
+// Sender   요청을 보낸 사람, 상대방이 요쳥을 수락할 경우 디엠창으로 연결
+// Recver   요청을 받은 사람. 자신이 요청을 수락학 경우 디엠창으로 연결
+// 먼저 들어온 사람 :  자신의 정보를 올리고 대기, 이후 들어온 요청에 대해 수락 및 거절
+// 늦게 들어온 사람이 sender : 자신의 정보를 올리고 기존 올라온 정보들에 대해 검사하고 메세지 보냄
+//                          --> 모든 매칭 프로세스는 시작되고 난 후 한 번만 전체 유저들에게 request를 보낸다!
+//                          --> 한번 request를 보내고 난 후에는 그 이후 추가된 새로운 유저로부터의 request가 오는 것을 기다린다
 
 public class Matching extends AppCompatActivity {
     boolean matchSuccess = false;
-    boolean matchAccept = false;
     Intent intent;
+    DatabaseReference mDatabase;
 
     String myUserID;            // 사용자의 userID
     matching_doginfo myDogInfo; // 사용자 반려견의 정보
-    String matchmateUserID;     // 매칭성공한 상대방의 userID
-    String SendReqUserID;       // 해당 userID 로 매칭 요청을 보냈음(변형된 상태)
-    String ReceiveReqUserID;    // 해당 userID 로부터 매칭 요청을 받음(변형된 상태)
+    String matchmateID;         // 매칭성공한 상대방의 userID
+
+    String myCvtdID;
+    String newUserID;
+
+    ArrayList<String> CheckedID = new ArrayList<String>(){};// 해당 userID를 검사하고, 적합할 경우 매칭 요청을 보냈음 - 여기에 포함된 아이디는 가시 검사하지 않는다
+    ArrayList<String> SenderID = new ArrayList<String>(){}; // 해당 userID 로 매칭 요청을 보냈음(변형된 상태)
+    String RecverID;                                        // 해당 userID 로부터 매칭 요청을 받음(변형된 상태)
 
 
     @Override
@@ -74,24 +81,26 @@ public class Matching extends AppCompatActivity {
 
         String dogSpecies;
 
-        DatabaseReference mDatabase;
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // 유저 이메일, 반려견 견종 받아오기
         SaveSharedPreference login_history = new SaveSharedPreference();
         myUserID = login_history.getUserName(getApplicationContext());
-        dogSpecies = "Maltese";               // 유저정보에서 가져오는걸로 수정,비반려인 유저의 경우 finish 되도록
+        //myUserID = "newuser@gmail.com";
+        dogSpecies = "Maltese";
+        //dogSpecies = "Chihuahua";               // 유저정보에서 가져오는걸로 수정,비반려인 유저의 경우 finish 되도록
 
         // 유저정보에 등록된 견종으로 강아지의 특성정보 asset json에서 받아오기
         myDogInfo = getDogAttriPart(dogSpecies); // match_dog class로 구성
 
         // 스스로를 실시간DB에 등록
-        String myCvtdID = convertID(myUserID);
+        myCvtdID = convertID(myUserID);
         mDatabase.child("MatchList").child(myCvtdID).setValue(myDogInfo);
         Log.d("상아","converted ID : "+myCvtdID);
 
         //  set test values !
-        /*
+
         String userID1 = "test1@gmail.com";
         String dogSpecies1 = "Afghan Hound";
         String userID2 = "test2@gmail.com";
@@ -112,10 +121,11 @@ public class Matching extends AppCompatActivity {
         mDatabase.child("MatchList").child(convertID(userID4)).setValue(DogInfo4);
         matching_doginfo DogInfo5 = getDogAttriPart(dogSpecies5);
         mDatabase.child("MatchList").child(convertID(userID5)).setValue(DogInfo5);
-        */
 
+
+        // -> 내가 뿌린 요청에 대해 수락한 유저가 있을 경우!
         // 데이터베이스에 올려진 자신의 정보에 listener
-        // userGetMatchRequest(상대로부터 받은 매칭요청) userMatchRequestAccepted(내가 보낸 요청에 대한 상대의 답신)
+        // uRecverGetReqFrom(상대로부터 받은 매칭요청) uSenderGetAckFrom(내가 보낸 요청에 대한 상대의 답신)
         mDatabase.child("MatchList").child(myCvtdID).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
@@ -124,16 +134,16 @@ public class Matching extends AppCompatActivity {
                 String key = dataSnapshot.getKey();
                 String value = dataSnapshot.getValue(String.class);
                 Log.d("상아","change on myuserID : "+key+" : "+value);
-                // userGetMatchRequest(상대로부터 받은 매칭요청)  => ReceiveReqUserID
+                // uRecverGetReqFrom(상대로부터 받은 매칭요청)  => RecverID
                 // 이 사람에 대한 매칭요청을 수락할지 말지 선택해야 - 수락할 경우 디엠창으로, 거절할경우 해당값 초기화
-                if (key.equals("userGetMatchRequest")){
-                    ReceiveReqUserID = value;
-                    GiveAnswer(mDatabase,myCvtdID);
+                if (key.equals("uRecverGetReqFrom")){
+                    RecverID = value;
+                    GiveAnswer(mDatabase,myCvtdID, value);
                 }
-                // userMatchRequestAccepted(내가 보낸 요청에 대한 상대의 답신) => SendReqUserID
-                // 이 값이 상대의 아이디와 같다면 스스로 종료하고 디엠창으로
-                if (key.equals("userMatchRequestAccepted") && value.equals(SendReqUserID)){
-                    startDM(myUserID, matchmateUserID);
+                // uSenderGetAckFrom(내가 보낸 요청에 대한 상대의 답신) => SenderID
+                // 이 값이 이전에 내가 산책 요청을 보낸 상대의 아이디들중 하나와 같다면 스스로 종료하고 디엠창으로
+                if (key.equals("uSenderGetAckFrom") && SenderID.contains(value) ){
+                    startDM(myUserID, matchmateID);
                     matchSuccess = true;
                     MatchingSuccess(mDatabase,myCvtdID);
                 }
@@ -146,51 +156,44 @@ public class Matching extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
-        // 사용자 이후 추가된 유저들에 대해 검색하고
+        // -> 내가 다른 적합한 유저들에게 매칭 신청을 뿌리는 부분!
+        // -> hasbeenSendReq == false일때만 신청 뿌린다! 뿌리고 나서는 해당 값을 true로 바꾼다
+        // -> 즉, 모든 Matching 객체는 딱 한번만 request를 전체에게 보낼 수 있다
+        // 사용자(나) 이후 추가된 유저들에 대해 검색하고
         // 적합할 경우 물어본후 매칭 요청 보내기
         mDatabase.child("MatchList").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String newUserID = dataSnapshot.getKey();
+                newUserID = dataSnapshot.getKey();
                 matching_doginfo newDogInfo = dataSnapshot.getValue(matching_doginfo.class);
-                Log.d("상아","newUserID : "+newUserID);
-                Log.d("상아","newDoginfo size : "+newDogInfo.size);
-                // 상대방의 반려견 정보와 사용자의 반려견 정보값의 차이 측정
-                int enerDiff = Math.abs(myDogInfo.energyLevel - newDogInfo.energyLevel);
-                int exerDiff = Math.abs(myDogInfo.exerciseNeeds - newDogInfo.exerciseNeeds);
-                int friDiff = Math.abs(myDogInfo.friendlyTowardStrangers - newDogInfo.friendlyTowardStrangers);
-                int potDiff = Math.abs(myDogInfo.potentialForPlayfulness - newDogInfo.potentialForPlayfulness);
-                int senDiff = Math.abs(myDogInfo.sensitivityLevel - newDogInfo.sensitivityLevel);
-                int Diff = enerDiff + exerDiff + friDiff + potDiff + senDiff;
-                Log.d("상아","newUserID's diff : "+Diff);
 
-                // 차이값이 10미만이고 사이즈가 같을 경우
-                // 요청 보내기 : 상대방의 userGetMatchRequest 에 자신의 id적기
-               if (Diff < 10 && myDogInfo.size == newDogInfo.size && myCvtdID!=newUserID){
-                   mDatabase.child("MatchList").child(newUserID).child("userGetMatchRequest").setValue(myCvtdID);
-                   Log.d("상아","newUserID gets match request from : "+ myCvtdID);
+                if (!CheckedID.contains(newUserID)){
+                    Log.d("상아","newUserID : "+newUserID);
+                    Log.d("상아","newDoginfo size : "+newDogInfo.size);
+                    // 상대방의 반려견 정보와 사용자의 반려견 정보값의 차이 측정
+                    int enerDiff = Math.abs(myDogInfo.energyLevel - newDogInfo.energyLevel);
+                    int exerDiff = Math.abs(myDogInfo.exerciseNeeds - newDogInfo.exerciseNeeds);
+                    int friDiff = Math.abs(myDogInfo.friendlyTowardStrangers - newDogInfo.friendlyTowardStrangers);
+                    int potDiff = Math.abs(myDogInfo.potentialForPlayfulness - newDogInfo.potentialForPlayfulness);
+                    int senDiff = Math.abs(myDogInfo.sensitivityLevel - newDogInfo.sensitivityLevel);
+                    int Diff = enerDiff + exerDiff + friDiff + potDiff + senDiff;
+                    Log.d("상아","newUserID's diff : "+Diff);
+
+                    // 차이값이 5미만이고 사이즈가 같을 경우
+                    // 요청 보내기 : 상대방의 uRecverGetReqFrom 에 자신의 id적기 = 매칭 요청을 보낸다!
+                    if (Diff < 5 && myDogInfo.size == newDogInfo.size && myCvtdID!=newUserID){
+                        // 내가 요청을 보낸 사용자 기록
+                        SenderID.add(newUserID);
+                        mDatabase.child("MatchList").child(newUserID).child("uRecverGetReqFrom").setValue(myCvtdID);
+                        Log.d("상아","newUserID gets match request from : "+ myCvtdID);
+                        // request 보내기를 성공하면, havebeenSendReq를 true로 변경
+                    }
+                    CheckedID.add(newUserID);
                 }
+
             }
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                /*
-                String key = dataSnapshot.getKey();
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("상아","change on myuserID : "+key+" : "+value);
-                // userGetMatchRequest(상대로부터 받은 매칭요청)  => ReceiveReqUserID
-                // 이 사람에 대한 매칭요청을 수락할지 말지 선택해야 - 수락할 경우 디엠창으로, 거절할경우 해당값 초기화
-                if (key.equals("userGetMatchRequest")){
-                    ReceiveReqUserID = value;
-                    GiveAnswer(mDatabase,myCvtdID);
-                }
-                // userMatchRequestAccepted(내가 보낸 요청에 대한 상대의 답신) => SendReqUserID
-                // 이 값이 상대의 아이디와 같다면 스스로 종료하고 디엠창으로
-                if (key.equals("userMatchRequestAccepted") && value.equals(SendReqUserID)){
-                    startDM(myUserID, matchmateUserID);
-                    matchSuccess = true;
-                    MatchingSuccess(mDatabase,myCvtdID);
-                }*/
-            }
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) { }
             @Override
@@ -199,36 +202,20 @@ public class Matching extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
-
-
-        /*while(!matchSuccess){
-            TryMatch(mDatabase, myCvtdID);
-        }*/
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // 사용자가 매칭과정 중간에 나갈경우 실시간db에 올려놓은 자기정보 삭제
+        mDatabase.child("MatchList").child(myCvtdID).setValue(null);
     }
 
 
-    // 매칭에 성공할 경우 (상대방이 요청을 수락하거나, 상대의 요청을 수락하거나)
-    // matchSuccess = true 하고 바로 return 한다
-    void TryMatch(DatabaseReference mDatabase, String cvtdID) {
-        // 사용자가 다른 사용자에게 요청을 보내는 부분
-        // 실시간DB에서 사용자JSON 파일 가져와서 검색
-        // 사이즈동일, 나머지 수치들의 차이값 합이 5 이하인 유저 찾아서 같이 산책할지 물어보기 : 상대방의 userGetMatchRequest = 자신의 userID (exception 처리)
-        SendReqUserID = "!!";
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     // 매칭 요청이 왔을 때 해당 요청을 수락 또는 거절
-    public void GiveAnswer(DatabaseReference mDatabase, String cvtdID){
+    // parameter = {DB래퍼런스, 사용자(나)아이디의 변형된 버전, 수락 요청을 보낸 상대 아이디 }
+    public void GiveAnswer(DatabaseReference mDatabase, String cvtdID, String recverID){
         // 다이얼로그 생성
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -237,7 +224,7 @@ public class Matching extends AppCompatActivity {
 
         // 다이얼로그 세팅
         TextView matchedmateinfo = (TextView) view.findViewById(R.id.matchedmateinfo);
-        matchedmateinfo.setText(REconvertID(ReceiveReqUserID) + "\n 반려견정보"); // 반려견 정보 추가
+        matchedmateinfo.setText(REconvertID(RecverID) + "\n 반려견정보"); // 반려견 정보 추가
         final Button acceptB = (Button) view.findViewById(R.id.accept);
         final Button rejectB = (Button) view.findViewById(R.id.reject);
         final AlertDialog dialog = builder.create();
@@ -247,9 +234,11 @@ public class Matching extends AppCompatActivity {
         acceptB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "산책메이트 수락! DM창으로 이동합니다.", Toast.LENGTH_SHORT).show();
+                // 상대방의 요청을 수락했으므로, 상대방의 uSenderGetAckFrom 값 수정
+                mDatabase.child("MatchList").child(recverID).child("uSenderGetAckFrom").setValue(myCvtdID);
                 dialog.dismiss();
-                matchmateUserID = REconvertID(ReceiveReqUserID);   // 디엠상대의 userID
-                startDM(myUserID, matchmateUserID);
+                matchmateID = REconvertID(RecverID);   // 디엠상대의 userID
+                startDM(myUserID, matchmateID);
                 matchSuccess = true;
                 MatchingSuccess(mDatabase,cvtdID);
             }
@@ -325,7 +314,16 @@ public class Matching extends AppCompatActivity {
         return null;
     }
 
-    // "testemail@gmail.com" -> "testemail@gmail/com"
+
+    /*
+    * 상아 : firebase 실시간 데이터베이스에서는 . 문자를 기록할 수 없습니다
+    * 이메일에는 . 이 포함되어 있어 이메일을 그대로 실시간 데이터베이스에 저장할 수 없고
+    * user@email.com 을 user@email>com 으로 변형 저장하여 매칭 및 상대방을 찾는 과정을 진행한 후
+    * 상대 화면에서 아이디가 보여지도록 할 때에는 다시 재변형하여 사용합니다
+    * 아래의 두 메서드는 이메일 변형/재변형을 담당합니다!
+    */
+
+    // "testemail@gmail.com" -> "testemail@gmail>com"
     // 스스로의 이메일을 실시간DB에 저장할때 사용
     public String convertID (String baseID){
         char c;
@@ -341,7 +339,7 @@ public class Matching extends AppCompatActivity {
         return result;
     }
 
-    // "testemail@gmail/com" -> "testemail@gmail.com"
+    // "testemail@gmail>com" -> "testemail@gmail.com"
     // 매칭상대의 이메일 보여주는 데에 사용
     public String REconvertID (String convertedID){
         char c;
@@ -358,8 +356,12 @@ public class Matching extends AppCompatActivity {
     }
 
     // start DM process
-    void startDM(String myID, String othersID){
+    // myID = 나 사용자의 아이디
+    // yourID = 매칭성공한 산책메이트의 아이디
+    void startDM(String myID, String yourID){
         Intent intent = new Intent(getApplicationContext(), DM.class);
+        intent.putExtra("myID", myID );
+        intent.putExtra("yourID", yourID );
         startActivity(intent);
     }
 

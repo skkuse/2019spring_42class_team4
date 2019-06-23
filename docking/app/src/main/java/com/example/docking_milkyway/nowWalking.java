@@ -95,7 +95,7 @@ public class nowWalking extends Fragment {
     Context context;
 
     // variables : about weather value
-    TextView cityField, detailsField, currentTemperatureField, weatherIcon, updatedField, dogAttribute;
+    TextView cityField, detailsField, currentTemperatureField, weatherIcon, updatedField;
     ProgressBar loader;
     double lat = 37.292047;
     double lon = 126.976890;
@@ -218,7 +218,6 @@ public class nowWalking extends Fragment {
         currentTemperatureField = (TextView) view.findViewById(R.id.current_temperature_field);
         weatherIcon = (TextView) view.findViewById(R.id.weather_icon);
         loader = (ProgressBar) view.findViewById(R.id.loader);
-        dogAttribute = (TextView) view.findViewById(R.id.dog_attribute);
         startTime = (TextView) view.findViewById(R.id.startTime);
         elaspeTime = (TextView) view.findViewById(R.id.elapseTime);
         Distance = (TextView) view.findViewById(R.id.distance);
@@ -236,14 +235,6 @@ public class nowWalking extends Fragment {
             public void onClick(View v) {       endRecording();      }
         });
 
-
-        // read dogattribute
-        // String ArrayList로 받아서 일단 프린트만 했습니다
-        String dogAttriArray = getDogAttribute(dogSpecies);
-        String tmpStr=dogAttriArray;
-
-        Log.d("상아","nowWalk : finished string : "+tmpStr);
-        dogAttribute.setText(tmpStr);
 
         return view;
     }

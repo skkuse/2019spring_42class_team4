@@ -4,21 +4,47 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <Button
-        android:layout_margin="10dp"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/writer" />
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/dogimg4"
+            app:civ_border_width="0dp"
+            app:civ_border_color="#FF000000"/>
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textAlignment="viewStart"
+            android:id="@+id/writer" />
+
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/ccontentssubstance"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/gradi_rect"/>
+
+
     <TextView
         android:id="@+id/contentstext"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -28,18 +54,29 @@
             android:id="@+id/contentlikebtn"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:textAlignment="viewStart"
+            android:layout_weight="0"
             android:text="좋아요"/>
         <TextView
-            android:layout_margin="10dp"
             android:id="@+id/likes"
-            android:text="0"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:gravity="center|left"
+            android:layout_weight="2"
+            android:text="0"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:background="#cccccc"
+            android:layout_weight="0"/>
         <Button
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/contentdeletebtn"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:textAlignment="viewEnd"
+            android:layout_weight="0"
             android:text="삭제"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView

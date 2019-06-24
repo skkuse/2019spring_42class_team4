@@ -57,6 +57,7 @@
         <activity android:name=".DM"></activity>
         <activity android:name=".Yourpage"></activity>
         <activity android:name=".search"></activity>
+        <activity android:name=".my_dog_info"></activity>
     </application>
 
 </manifest>

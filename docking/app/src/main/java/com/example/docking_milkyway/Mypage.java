@@ -25,6 +25,7 @@ public class Mypage extends AppCompatActivity {
     Button My_info;
     Button follwoing;
     Button log_out;
+    Button my_dog_info;
     private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>(100);
 
     @Override
@@ -113,6 +114,16 @@ public class Mypage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), my_info.class);
                 startActivity(intent);
+            }
+        });
+
+        my_dog_info = findViewById(R.id.my_dog_info);
+
+        my_dog_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), my_dog_info.class);
+                startActivity(intent);;
             }
         });
 

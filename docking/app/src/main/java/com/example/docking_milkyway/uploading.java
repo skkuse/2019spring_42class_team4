@@ -300,7 +300,7 @@ public class uploading extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 Uri downloadUri = task.getResult();
 
-                                ContentDB temp_content = new ContentDB(downloadUri.toString(), text, tags, userid);
+                                ContentDB temp_content = new ContentDB(downloadUri.toString(), text, false, userid);
                                 if (!newlocation.isEmpty()) {
                                     temp_content.location = newlocation;
                                 }

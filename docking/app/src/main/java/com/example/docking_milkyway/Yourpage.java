@@ -51,7 +51,7 @@ public class Yourpage extends AppCompatActivity {
             fireDB.collection("Contents")
                     .whereEqualTo("userSSN", userid)
                     .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {                                        /*해당 유저의 게시물들을 모아서 보여준다*/
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if(task.isSuccessful()) {
@@ -121,7 +121,7 @@ public class Yourpage extends AppCompatActivity {
 
                 Log.d("용태", "target_id : " + target_id + "\nuser_id : " + userid);
 
-                Follow_unFollow toggle = new Follow_unFollow(target_id, userid);
+                Follow_unFollow toggle = new Follow_unFollow(target_id, userid);                            /* 팔로우/언팔로우 함수 호출 */
                 String status = toggle.Follow_toggle();
                 Log.d("팔로우/언팔", "/" +  status);
                 Toast.makeText(getApplicationContext(),status,Toast.LENGTH_LONG).show();

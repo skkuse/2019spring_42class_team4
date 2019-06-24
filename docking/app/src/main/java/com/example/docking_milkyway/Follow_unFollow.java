@@ -32,7 +32,7 @@ public class Follow_unFollow {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
+                    DocumentSnapshot document = task.getResult();                                   /* 팔로우/언팔로우 기능 구현 */
                     if(document.exists()){
                         Log.d("으아아아아아", "팔로잉 리스트 확인");
                         FollowDB fflist = document.toObject(FollowDB.class);
@@ -67,7 +67,7 @@ public class Follow_unFollow {
         DocumentReference followRef = followDB.collection("Follow").document(user_id);
         followRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {                              /*팔로우 되지 않았을경우 팔로우 버튼 클릭시 팔로우 목록에 해당계정 추가*/
                 if(task.isSuccessful()){
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
@@ -81,7 +81,7 @@ public class Follow_unFollow {
     }
     public void remove_follower(){
         FirebaseFirestore followDB = FirebaseFirestore.getInstance();
-        DocumentReference followRef = followDB.collection("Follow").document(user_id);
+        DocumentReference followRef = followDB.collection("Follow").document(user_id);      /*이미 팔로우 되어있을경우 언팔로우 버튼 클릭시 팔로우 목록에서 해당계정 삭제*/
         followRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

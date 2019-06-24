@@ -56,10 +56,12 @@ public class Mypage extends AppCompatActivity {
                                     Log.d("은하", "data: "+data.toString());
                                     recyclerlist.add(data);
                                     Log.d("은하", "contentSSN : "+data.SSN + ", userid : "+userid);
+
+                                    ArrayList<String> iscomment = new ArrayList<>();
                                     ArrayList<CommentDB> commentslist = new ArrayList<>();
+
                                     fireDB.collection("Comments")
-                                            .whereEqualTo("User_SSN", userid)
-                                            .whereEqualTo("C_Num", data.SSN)
+                                            .whereEqualTo("parent_content", data.SSN)
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                 @Override
@@ -76,6 +78,7 @@ public class Mypage extends AppCompatActivity {
                                                         if(!commentslist.isEmpty()) {
                                                             Log.d("은하", data.SSN + "의 commentlist는 null이 아님!");
                                                             commentDBS.add(commentslist);
+                                                            iscomment.add(data.SSN);
                                                             //getcommentsfirestore(finalI, userid);
                                                             Log.d("은하", "여기 recyclerlist: "+recyclerlist);
                                                             Log.d("은하", "여기?");
@@ -98,7 +101,6 @@ public class Mypage extends AppCompatActivity {
                             }
                         }
                     });
-
 
         }
 

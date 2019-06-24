@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class Community extends Fragment {
     private View view;
     private Button uploading, search;
     private TextView isnotlogin;
+    private EditText searchinsert;
     private ArrayList<ArrayList<CommentDB>> commentDBS = new ArrayList<>();
 
     @Override
@@ -54,6 +56,7 @@ public class Community extends Fragment {
         Context context = view.getContext();
         uploading = view.findViewById(R.id.upload);
         search = view.findViewById(R.id.search);
+        searchinsert = view.findViewById(R.id.searchtext);
         isnotlogin = view.findViewById(R.id.isnotlogin);
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
 
@@ -69,8 +72,11 @@ public class Community extends Fragment {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), uploading.class);
+                Intent intent = new Intent(getActivity(), search.class );
+                intent.putExtra("searchtext",searchinsert.getText().toString());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                //search activity로 바꾸기
             }
         });
 
@@ -111,7 +117,6 @@ public class Community extends Fragment {
                                     ArrayList<CommentDB> commentslist = new ArrayList<>();
 
                                     fireDB.collection("Comments")
-                                            .whereEqualTo("User_SSN", userid)
                                             .whereEqualTo("parent_content", data.SSN)
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

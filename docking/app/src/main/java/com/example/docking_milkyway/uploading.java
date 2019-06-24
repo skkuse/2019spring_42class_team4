@@ -55,16 +55,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import me.gujun.android.taggroup.TagGroup;
+
 public class uploading extends AppCompatActivity {
 
     private Button getcamera, getalbum, uploadok, uplodacancel;
-    private EditText textinsert, taginsert, locationinsert;
+    private EditText textinsert, locationinsert;
+    private TagGroup tagGroup;
 
     private Uri savingUri;
     private String currentPhotoPath; //실제 사진 파일 저장 경로
     String mImageCaptureName; //이미지 이름
 
     private File tempFile;
+
+    private String[] tags;
 
     String user_id;
     private StorageReference storageRef;
@@ -223,7 +228,7 @@ public class uploading extends AppCompatActivity {
         uplodacancel = findViewById(R.id.uploadcancel);
 
         textinsert = findViewById(R.id.textinsert);
-        taginsert = findViewById(R.id.taginsert);
+        tagGroup = findViewById(R.id.tag_group);
         locationinsert = findViewById(R.id.locationinsert);
 
         getalbum.setOnClickListener(new View.OnClickListener() {
@@ -253,10 +258,11 @@ public class uploading extends AppCompatActivity {
                 Log.d("은하", "uploadbtn click");
                 Log.d("은하", "현재 "+userid+" 업로딩중");
                 String text = textinsert.getText().toString();
+                String newlocation = locationinsert.getText().toString();
                 Boolean tag=false;
-                if(taginsert.getText().toString().length() > 0){
-                    tag = true;
-                }
+
+                tags = tagGroup.getTags();
+
 
                 if(TextUtils.isEmpty(text) || Uri.EMPTY.equals(savingUri)){
                     Toast.makeText(v.getContext(), "내용을 입력해주세요", Toast.LENGTH_SHORT).show();
@@ -294,7 +300,10 @@ public class uploading extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 Uri downloadUri = task.getResult();
 
-                                ContentDB temp_content = new ContentDB(downloadUri.toString(), text, false, userid);
+                                ContentDB temp_content = new ContentDB(downloadUri.toString(), text, tags, userid);
+                                if (!newlocation.isEmpty()) {
+                                    temp_content.location = newlocation;
+                                }
 
                                 firebaseFirestore.collection("Contents")
                                         .add(temp_content)
@@ -331,58 +340,6 @@ public class uploading extends AppCompatActivity {
                                                 startActivity(intent);
                                             }
                                         });
-                                /*
-                                DocumentReference contentsRef = firebaseFirestore.collection("Contents").document(userid);
-                                contentsRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            DocumentSnapshot document = task.getResult();
-                                            if (document.exists()) {
-                                                Log.d("은하", "contents document list 존재 확인");
-                                                long newcontentssize = (long) document.getData().get("contentssize");
-                                                int SSN = (int) newcontentssize;
-                                                temp_content.SSN = SSN;
-                                                temp_content.setText(text);
-                                                firebaseFirestore.collection("Contents")
-                                                        .add(temp_content)
-                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                            @Override
-                                                            public void onSuccess(DocumentReference documentReference) {
-                                                                Log.d("은하", "DocumentSnapshot written with ID: " + documentReference.getId());
-                                                            }
-                                                        })
-                                                        .addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(@NonNull Exception e) {
-                                                                Log.w("은하", "Error adding document", e);
-                                                            }
-                                                        });
-                                                //contentssize update to firebase
-                                                newcontentssize++;
-                                                firebaseFirestore.collection("Contents")
-                                                        .document(userid).update("contentssize", newcontentssize);
-                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
-                                                startActivity(intent);
-                                            } else {
-                                                Log.d("은하", "최초 게시글");
-                                                ArrayList<ContentDB> list = new ArrayList<>();
-                                                int SSN = 0;
-                                                temp_content.SSN = SSN;
-                                                temp_content.setText(text);
-                                                list.add(temp_content);
-                                                firebaseFirestore.collection("Contents").document(userid).set(list);
-                                                //contentssize setting to firebase
-                                                //이 아래 줄 수정 필요
-                                                //firebaseFirestore.collection("Contents").document(userid).set("contentssize", 1);
-                                                Intent intent = new Intent(v.getContext(), MainActivity.class);
-                                                startActivity(intent);
-                                            }
-                                        } else {
-                                            Log.d("은하", "get() failed");
-                                        }
-                                    }
-                                });*/
 
                             } else {
                                 //handle fail

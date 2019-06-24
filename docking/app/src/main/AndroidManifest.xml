@@ -55,6 +55,8 @@
         <activity android:name=".Follwing"></activity>
         <activity android:name=".Peristalsis"/>
         <activity android:name=".DM"></activity>
+        <activity android:name=".Yourpage"></activity>
+        <activity android:name=".search"></activity>
     </application>
 
 </manifest>

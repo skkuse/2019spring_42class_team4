@@ -50,7 +50,7 @@ public class Matching extends AppCompatActivity {
     String myCvtdID;
     String newUserID;
 
-    ArrayList<String> CheckedID = new ArrayList<String>(){};// 해당 userID를 검사하고, 적합할 경우 매칭 요청을 보냈음 - 여기에 포함된 아이디는 가시 검사하지 않는다
+    ArrayList<String> CheckedID = new ArrayList<String>(){};// 해당 userID를 검사하고, 적합할 경우 매칭 요청을 보냈음 - 여기에 포함된 아이디는 다시 검사하지 않는다
     ArrayList<String> SenderID = new ArrayList<String>(){}; // 해당 userID 로 매칭 요청을 보냈음(변형된 상태)
     String RecverID;                                        // 해당 userID 로부터 매칭 요청을 받음(변형된 상태)
 
@@ -85,11 +85,16 @@ public class Matching extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // 유저 이메일, 반려견 견종 받아오기
-        SaveSharedPreference login_history = new SaveSharedPreference();
-        myUserID = login_history.getUserName(getApplicationContext());
-        //myUserID = "newuser@gmail.com";
-        dogSpecies = "Maltese";
-        //dogSpecies = "Chihuahua";               // 유저정보에서 가져오는걸로 수정,비반려인 유저의 경우 finish 되도록
+        // 유저정보에서 가져오는걸로 수정,비반려인 유저의 경우 finish 되도록
+
+        // --> 실제 계정 정보!
+        //SaveSharedPreference login_history = new SaveSharedPreference();
+        //myUserID = login_history.getUserName(getApplicationContext());
+        //dogSpecies = "Maltese";
+
+        // --> 테스트용 계정 정보
+        myUserID = "newuser@gmail.com";
+        dogSpecies = "Chihuahua";
 
         // 유저정보에 등록된 견종으로 강아지의 특성정보 asset json에서 받아오기
         myDogInfo = getDogAttriPart(dogSpecies); // match_dog class로 구성
@@ -143,6 +148,7 @@ public class Matching extends AppCompatActivity {
                 // uSenderGetAckFrom(내가 보낸 요청에 대한 상대의 답신) => SenderID
                 // 이 값이 이전에 내가 산책 요청을 보낸 상대의 아이디들중 하나와 같다면 스스로 종료하고 디엠창으로
                 if (key.equals("uSenderGetAckFrom") && SenderID.contains(value) ){
+                    matchmateID = REconvertID(value);
                     startDM(myUserID, matchmateID);
                     matchSuccess = true;
                     MatchingSuccess(mDatabase,myCvtdID);
@@ -264,10 +270,10 @@ public class Matching extends AppCompatActivity {
         Handler hd = new Handler();
         hd.postDelayed(new Runnable() {
             public void run() {
-                Toast.makeText(getApplicationContext(), "match process will end in 15sec", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "match process will end in 5sec", Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }, 15000);
+        }, 5000);
     }
 
     // 반려견의 견종으로 관련 정보들 중 일부 받아와서 match_dog 클래스로 생성

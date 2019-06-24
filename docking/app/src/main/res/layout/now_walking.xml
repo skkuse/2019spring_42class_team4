@@ -174,14 +174,6 @@
             android:textSize="16sp"
             android:id="@+id/finishWalking"/>
 
-        <!--강아지정보 받아오는 텍스트뷰 추가-->
-
-        <TextView
-            android:id="@+id/dog_attribute"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="13sp"/>
 
 
     </LinearLayout>

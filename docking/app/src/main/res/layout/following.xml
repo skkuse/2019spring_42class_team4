@@ -21,7 +21,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Follower"
+                android:text="Following"
                 android:textAlignment="center"
                 android:textSize="24sp" />
 
@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Following"
+                android:text="Follower"
                 android:textAlignment="center"
                 android:textSize="24sp" />
 

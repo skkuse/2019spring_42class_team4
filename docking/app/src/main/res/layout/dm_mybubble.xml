@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingRight="5dp"
+    android:paddingLeft="60dp"
+    android:paddingBottom="5dp"
+    android:clipToPadding="false">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+
+        android:id="@+id/message_writer"
+        android:padding="5dp"
+
+        android:textColor="#010101"
+        android:textStyle="bold"
+        android:elevation="2dp"
+        android:textSize="9dp"
+        android:gravity="right"
+
+        android:text="User ID"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/message_writer"
+
+        android:id="@+id/message_body"
+        android:padding="5dp"
+
+        android:background="@drawable/dm_mybubble_back"
+        android:textColor="#222222"
+        android:elevation="2dp"
+        android:textSize="12dp"
+
+        android:text="User ID send message"
+        />
+
+</RelativeLayout>

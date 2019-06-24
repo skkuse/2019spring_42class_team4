@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@id/sendtext"
+            android:background="#ededed"
             android:text="input text to send "
             android:textColor="#aaaaaa"/>
 

@@ -231,6 +231,9 @@ public class uploading extends AppCompatActivity {
         tagGroup = findViewById(R.id.tag_group);
         locationinsert = findViewById(R.id.locationinsert);
 
+        Intent intent = getIntent();
+        String userid = intent.getStringExtra("userid");
+
         getalbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,9 +254,9 @@ public class uploading extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                SaveSharedPreference login_history = new SaveSharedPreference();
+                //SaveSharedPreference login_history = new SaveSharedPreference();
                 //String userid = (String) login_history.getUserName(v.getContext());
-                String userid = "1002galaxy@gmail.com"; //테스트용
+                //String userid = "1002galaxy@gmail.com"; //테스트용
 
                 Log.d("은하", "uploadbtn click");
                 Log.d("은하", "현재 "+userid+" 업로딩중");

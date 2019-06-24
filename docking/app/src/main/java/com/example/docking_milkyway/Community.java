@@ -52,6 +52,10 @@ public class Community extends Fragment {
 
         final FirebaseFirestore fireDB = FirebaseFirestore.getInstance();
 
+        SaveSharedPreference login_history = new SaveSharedPreference();
+        Log.d("은하", login_history.toString());
+        final String userid=login_history.getUserName(view.getContext());
+
         ArrayList<ContentDB> recyclerlist = new ArrayList<>();
         Context context = view.getContext();
         uploading = view.findViewById(R.id.upload);
@@ -64,6 +68,8 @@ public class Community extends Fragment {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(getActivity(), uploading.class);
+                intent.putExtra("userid",userid);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Log.d("은하", "go uploading activity");
                 startActivity(intent);
             }
@@ -79,11 +85,7 @@ public class Community extends Fragment {
                 //search activity로 바꾸기
             }
         });
-
-        SaveSharedPreference login_history = new SaveSharedPreference();
-        Log.d("은하", login_history.toString());
-        //String userid = login_history.getUserName(view.getContext());
-        String userid="1002galaxy@gmail.com"; //테스트용
+        //String userid="1002galaxy@gmail.com"; //테스트용
         Log.d("은하", "userid : "+userid);
         if(userid.isEmpty()){
             Log.d("은하", "userid가 비어있음");

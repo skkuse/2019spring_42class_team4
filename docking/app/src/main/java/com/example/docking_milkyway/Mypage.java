@@ -61,7 +61,6 @@ public class Mypage extends AppCompatActivity {
                                     ArrayList<CommentDB> commentslist = new ArrayList<>();
 
                                     fireDB.collection("Comments")
-                                            .whereEqualTo("User_SSN", userid)
                                             .whereEqualTo("parent_content", data.SSN)
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

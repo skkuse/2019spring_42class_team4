@@ -40,7 +40,9 @@
                 android:id="@+id/emailinsert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="docking@docking.com" />
+                android:hint="docking@docking.com"
+                android:focusable="true"
+                android:inputType="textEmailAddress"/>
         </LinearLayout>
 
         <LinearLayout
@@ -58,7 +60,8 @@
                 android:id="@+id/pwinsert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="*********" />
+                android:hint="*********"
+                android:inputType="textPassword"/>
         </LinearLayout>
 
     </LinearLayout>

@@ -1,11 +1,15 @@
 package com.example.docking_milkyway;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,13 +26,22 @@ import com.google.firebase.firestore.auth.User;
 
 public class signin extends AppCompatActivity {
 
+    Context context = this;
+
+    String sex;
+    String user_type;
+
     Button usertypeinsert;
     Button sign_in;
+    Button sexinsert;
+    Button ageinsert;
     private EditText emailinsert;
     private EditText pwinsert;
     private EditText nameinsert;
     private EditText nicknameinsert;
 
+    ArrayAdapter<String> sexadapter;
+    ArrayAdapter<String> usertypeadapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +53,49 @@ public class signin extends AppCompatActivity {
         pwinsert = findViewById(R.id.pwinsert);
         nameinsert = findViewById(R.id.nameinsert);
         nicknameinsert = findViewById(R.id.nicknameinsert);
+        sexinsert = findViewById(R.id.sexinsert);
 
+        //김은하; 성별 선택창 작성
+        sexadapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice);
+        sexadapter.addAll("남성", "여성");
+        sexadapter.notifyDataSetChanged();
+
+        sexinsert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                alert.setTitle("성별 선택"); //타이틀
+
+                alert.setAdapter(sexadapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sex = sexadapter.getItem(which);
+                    }
+                });
+                alert.show();
+            }
+        });
+
+        //김은하; 유저타입 선택창 작성
+        usertypeadapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice);
+        usertypeadapter.addAll("반려인", "비반려인", "전문가");
+        usertypeadapter.notifyDataSetChanged();
+
+        usertypeinsert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                alert.setTitle("유저 타입 선택");
+
+                alert.setAdapter(usertypeadapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        user_type = usertypeadapter.getItem(which);
+                    }
+                });
+                alert.show();
+            }
+        });
 
         final FirebaseFirestore userDB = FirebaseFirestore.getInstance();
 
@@ -53,8 +108,6 @@ public class signin extends AppCompatActivity {
                 String name = nameinsert.getText().toString();
                 String nickname = nicknameinsert.getText().toString();
                 int age = 10;
-                String user_type = "전문가";
-                String sex = "남성";
 
                // User temp_user = new UserDB(email,name,pw,nickname,age,sex,user_type);
                 UserDB temp_user = new UserDB(email,name,pw,nickname,age,sex,user_type);

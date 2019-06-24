@@ -142,7 +142,7 @@ public class uploading extends AppCompatActivity {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap originalBm = BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
         Log.d("은하", "setImage : " + tempFile.getAbsolutePath());
-
+        imageView.setVisibility(View.VISIBLE);
         imageView.setImageBitmap(originalBm);
     }
 

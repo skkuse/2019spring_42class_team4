@@ -17,18 +17,7 @@ public class ContentDB {
 
     ContentDB() {}
 
-    ContentDB(String SSN, String substance, String text, Date date, String[] tag, int like, int comment, String userSSN) {
-        this.SSN = SSN;
-        this.substance = substance;
-        this.text = text;
-        this.date = date;
-        this.tag = tag;
-        this.like = like;
-        this.comment = comment;
-        this.userSSN = userSSN;
-    }
-
-    ContentDB(String substance, String text, String[] tag, String userSSN){
+    ContentDB(String substance, String text, String[] tag, String userSSN) {
         this.SSN = "";
         this.substance = substance;
         this.text = text;
@@ -36,10 +25,9 @@ public class ContentDB {
         this.like = 0;
         this.comment = 0;
         this.userSSN = userSSN;
-        this.location="";
+        this.location = "";
     }
 
-    //테스트용
     ContentDB(String substance, String text, String[] tag, String userSSN, String location){
         this.SSN = "";
         this.substance = substance;

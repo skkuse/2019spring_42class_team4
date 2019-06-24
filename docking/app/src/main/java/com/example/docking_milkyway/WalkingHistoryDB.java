@@ -5,7 +5,7 @@ import com.google.firebase.Timestamp;
 import java.util.ArrayList;
 
 public class WalkingHistoryDB {
-    String dogssn;
+    int dogssn;
     int distance;
     int elapsetime;
     Timestamp starttime;
@@ -35,7 +35,7 @@ public class WalkingHistoryDB {
     public WalkingHistoryDB() {
     }
 
-    public WalkingHistoryDB(String dog_ssn, int dist, int elap, Timestamp stt, Timestamp end){
+    public WalkingHistoryDB(int dog_ssn, int dist, int elap, Timestamp stt, Timestamp end){
         this.dogssn = dog_ssn;
         this.distance = dist;
         this.elapsetime = elap;
@@ -43,11 +43,11 @@ public class WalkingHistoryDB {
         this.endtime = end;
     }
 
-    public String getdogssn() {
+    public int getdogssn() {
         return dogssn;
     }
 
-    public void setdogssn(String dog_SSN) {
+    public void setdogssn(int dog_SSN) {
         dogssn = dog_SSN;
     }
 

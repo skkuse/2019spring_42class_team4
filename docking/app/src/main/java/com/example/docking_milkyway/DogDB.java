@@ -4,7 +4,7 @@ public class DogDB {
     String SSN;
     String name;
     String species;
-    int age;
+    String age;
     String sex;
     int weight;
 
@@ -15,13 +15,12 @@ public class DogDB {
         this.name = name;
     }
 
-    public DogDB(String SSN, String name, String species, int age, String sex, int weight) {
+    public DogDB(String SSN, String name, String species, String age, String sex) {
         this.SSN = SSN;
         this.name = name;
         this.species = species;
         this.age = age;
         this.sex = sex;
-        this.weight = weight;
     }
 
     //public int getSSN() {
@@ -48,11 +47,11 @@ public class DogDB {
         this.species = species;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 
